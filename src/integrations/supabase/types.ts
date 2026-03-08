@@ -361,6 +361,7 @@ export type Database = {
           email: string
           full_name: string
           id: string
+          is_suspended: boolean
         }[]
       }
       has_role: {
