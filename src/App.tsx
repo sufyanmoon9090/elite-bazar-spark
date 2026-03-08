@@ -96,6 +96,7 @@ const App = () => (
               <Sonner />
               <WhatsAppButton />
               <BrowserRouter>
+                <PushNotificationListener />
                 <AnimatedRoutes />
               </BrowserRouter>
             </FavoritesProvider>
