@@ -111,6 +111,7 @@ const ProductDetails = () => {
                     src={allImages[selectedImageIndex]}
                     alt={`${product.name} - Image ${selectedImageIndex + 1}`}
                     className="w-full aspect-square object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
