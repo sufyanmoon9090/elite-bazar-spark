@@ -6,16 +6,21 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { toast } from "sonner";
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product }: { product: Product & { in_stock?: boolean } }) => {
   const { addToCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+  const inStock = product.in_stock !== false;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!inStock) {
+      toast.error("This product is out of stock");
+      return;
+    }
     addToCart(product);
     toast.success(`${product.name} added to cart`);
   };
@@ -37,7 +42,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
       >
         <div className="relative aspect-square overflow-hidden">
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+          <img src={product.image} alt={product.name} className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${!inStock ? "opacity-50 grayscale" : ""}`} onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
           {product.badge && (
             <span className="absolute top-3 left-3 bg-gradient-gold text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
               {product.badge}
@@ -48,17 +53,26 @@ const ProductCard = ({ product }: { product: Product }) => {
               -{discount}%
             </span>
           )}
-          <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-            <button onClick={handleAddToCart} className="p-2.5 bg-primary text-primary-foreground rounded-full hover:scale-110 transition-transform">
-              <ShoppingCart size={18} />
-            </button>
-            <button onClick={handleFavorite} className={`p-2.5 rounded-full border border-border hover:scale-110 transition-transform ${isFavorite(product.id) ? "bg-red-500 text-white" : "bg-card text-foreground"}`}>
-              <Heart size={18} className={isFavorite(product.id) ? "fill-current" : ""} />
-            </button>
-            <Link to={`/product/${product.id}`} onClick={(e) => e.stopPropagation()} className="p-2.5 bg-card text-foreground rounded-full border border-border hover:scale-110 transition-transform">
-              <Eye size={18} />
-            </Link>
-          </div>
+          {!inStock && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-destructive text-destructive-foreground text-sm font-bold px-4 py-2 rounded-lg shadow-lg">
+                Out of Stock
+              </span>
+            </div>
+          )}
+          {inStock && (
+            <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button onClick={handleAddToCart} className="p-2.5 bg-primary text-primary-foreground rounded-full hover:scale-110 transition-transform">
+                <ShoppingCart size={18} />
+              </button>
+              <button onClick={handleFavorite} className={`p-2.5 rounded-full border border-border hover:scale-110 transition-transform ${isFavorite(product.id) ? "bg-red-500 text-white" : "bg-card text-foreground"}`}>
+                <Heart size={18} className={isFavorite(product.id) ? "fill-current" : ""} />
+              </button>
+              <Link to={`/product/${product.id}`} onClick={(e) => e.stopPropagation()} className="p-2.5 bg-card text-foreground rounded-full border border-border hover:scale-110 transition-transform">
+                <Eye size={18} />
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="p-4">
@@ -70,10 +84,17 @@ const ProductCard = ({ product }: { product: Product }) => {
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg text-gradient-gold">Rs. {product.price.toLocaleString()}</span>
-            {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-bold text-lg text-gradient-gold">Rs. {product.price.toLocaleString()}</span>
+              {product.originalPrice && (
+                <span className="text-sm text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>
+              )}
+            </div>
+            {inStock ? (
+              <span className="text-[10px] font-semibold text-green-500">In Stock</span>
+            ) : (
+              <span className="text-[10px] font-semibold text-destructive">Out of Stock</span>
             )}
           </div>
         </div>

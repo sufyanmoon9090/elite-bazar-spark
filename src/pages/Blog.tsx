@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
-import { blogPosts } from "@/data/mockData";
+import { useBlogPosts } from "@/hooks/useBlogPosts";
+import { blogPosts as fallbackPosts } from "@/data/mockData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Blog = () => {
+  const { data: dbPosts = [] } = useBlogPosts();
+  const posts = dbPosts.length > 0 ? dbPosts : fallbackPosts;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -16,7 +20,7 @@ const Blog = () => {
             <p className="text-muted-foreground mb-10">Tips, trends, and product insights</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {blogPosts.map((post, i) => (
+              {posts.map((post, i) => (
                 <motion.article
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -25,11 +29,7 @@ const Blog = () => {
                   className="bg-card border border-border rounded-xl overflow-hidden group cursor-pointer hover:border-primary/30 transition-all"
                 >
                   <div className="aspect-video overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                   </div>
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-3">
