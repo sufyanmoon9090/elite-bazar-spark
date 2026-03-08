@@ -35,6 +35,7 @@ import AdminNotifications from "./pages/admin/Notifications";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
 import AdminCategories from "./pages/admin/Categories";
+import AdminBlogPosts from "./pages/admin/BlogPosts";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const AnimatedRoutes = () => {
             <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="categories" element={<AdminCategories />} />
+            <Route path="blog" element={<AdminBlogPosts />} />
             <Route path="orders" element={<Orders />} />
             <Route path="customers" element={<Customers />} />
             <Route path="coupons" element={<Coupons />} />

@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Bell,
   FolderTree,
+  BookOpen,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, Link } from "react-router-dom";
@@ -35,6 +36,7 @@ const mainItems = [
 ];
 
 const managementItems = [
+  { title: "Blog / Guides", url: "/admin/blog", icon: BookOpen },
   { title: "Coupons", url: "/admin/coupons", icon: Tag },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
   { title: "Reports", url: "/admin/reports", icon: FileText },

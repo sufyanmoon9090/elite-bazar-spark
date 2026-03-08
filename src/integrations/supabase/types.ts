@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          category: string
+          created_at: string
+          date: string
+          excerpt: string
+          id: string
+          image: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          date?: string
+          excerpt?: string
+          id?: string
+          image?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          date?: string
+          excerpt?: string
+          id?: string
+          image?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -219,6 +252,7 @@ export type Database = {
           id: string
           image: string
           images: Json | null
+          in_stock: boolean
           name: string
           original_price: number | null
           price: number
@@ -233,6 +267,7 @@ export type Database = {
           id?: string
           image?: string
           images?: Json | null
+          in_stock?: boolean
           name: string
           original_price?: number | null
           price?: number
@@ -247,6 +282,7 @@ export type Database = {
           id?: string
           image?: string
           images?: Json | null
+          in_stock?: boolean
           name?: string
           original_price?: number | null
           price?: number

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, ProductVariant } from "@/hooks/useProductVariants";
 import { useCategories } from "@/hooks/useCategories";
@@ -269,12 +270,23 @@ export default function Products() {
                     {product.images && product.images.length > 0 && (
                       <Badge variant="outline" className="text-[10px]">{product.images.length} imgs</Badge>
                     )}
+                    <Badge variant={(product as any).in_stock === false ? "destructive" : "default"} className="text-[10px]">
+                      {(product as any).in_stock === false ? "Out of Stock" : "In Stock"}
+                    </Badge>
                   </div>
                 </div>
-                <div className="flex gap-1 mt-2">
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(product)}><Pencil className="h-3.5 w-3.5" /></Button>
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openVariants(product.id)} title="Manage Variants"><Layers className="h-3.5 w-3.5" /></Button>
-                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                <div className="flex items-center gap-1 mt-2">
+                  <Switch
+                    checked={(product as any).in_stock !== false}
+                    onCheckedChange={(checked) => updateProduct.mutate({ id: product.id, data: { in_stock: checked } as any }, { onSuccess: () => toast({ title: checked ? "Marked in stock" : "Marked out of stock" }) })}
+                    className="scale-75"
+                  />
+                  <span className="text-[10px] text-muted-foreground">Stock</span>
+                  <div className="ml-auto flex gap-1">
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(product)}><Pencil className="h-3.5 w-3.5" /></Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openVariants(product.id)} title="Manage Variants"><Layers className="h-3.5 w-3.5" /></Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                  </div>
                 </div>
               </CardContent>
             </div>
