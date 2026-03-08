@@ -66,9 +66,17 @@ export function useCreateOrder() {
       shipping_method: string;
       address: any;
     }) => {
-      const { data, error } = await supabase.from("orders").insert(order).select().single();
+      const { data, error } = await supabase.from("orders").insert({
+        user_id: order.user_id,
+        order_number: order.order_number,
+        items: order.items as any,
+        total: order.total,
+        shipping_cost: order.shipping_cost,
+        shipping_method: order.shipping_method,
+        address: order.address as any,
+      } as any).select().single();
       if (error) throw error;
-      return data as Order;
+      return data as unknown as Order;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my_orders"] });
