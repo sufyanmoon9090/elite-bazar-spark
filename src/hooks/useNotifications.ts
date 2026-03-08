@@ -61,11 +61,11 @@ export function useSendNotification() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ title, message, target_user_id }: { title: string; message: string; target_user_id?: string | null }) => {
-      const insertData: any = { title, message };
+      const insertData: Record<string, unknown> = { title, message };
       if (target_user_id) {
         insertData.target_user_id = target_user_id;
       }
-      const { error } = await supabase.from("notifications").insert(insertData);
+      const { error } = await supabase.from("notifications").insert(insertData as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -78,7 +78,7 @@ export function useAllProfiles() {
   return useQuery({
     queryKey: ["all_profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_all_users_for_admin");
+      const { data, error } = await (supabase.rpc as any)("get_all_users_for_admin");
       if (error) throw error;
       return (data || []) as { id: string; email: string; full_name: string | null }[];
     },
