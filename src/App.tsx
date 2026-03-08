@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
 import PageTransition from "@/components/PageTransition";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
