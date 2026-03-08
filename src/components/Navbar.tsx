@@ -68,6 +68,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
+          {searchOpen ? (
             <form onSubmit={handleSearch} className="flex items-center gap-2">
               <Input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search..." className="h-8 w-32 sm:w-48 text-sm bg-card" />
               <button type="button" onClick={() => setSearchOpen(false)} className="p-1 text-muted-foreground"><X size={16} /></button>
