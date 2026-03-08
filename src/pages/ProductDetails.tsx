@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw, Check } from "lucide-react";
-import { products } from "@/data/mockData";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { useProductStore } from "@/store/productStore";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,12 @@ import { useState } from "react";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { products } = useProductStore();
   const product = products.find((p) => p.id === id);
   const { addToCart, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   if (!product) {
     return (
@@ -33,6 +35,7 @@ const ProductDetails = () => {
     );
   }
 
+  const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
   const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
@@ -40,6 +43,9 @@ const ProductDetails = () => {
     for (let i = 0; i < quantity; i++) addToCart(product);
     toast.success(`${product.name} added to cart`);
   };
+
+  const nextImage = () => setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
+  const prevImage = () => setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,10 +61,59 @@ const ProductDetails = () => {
           </div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
-            <div className="relative rounded-2xl overflow-hidden bg-card border border-border">
-              <img src={product.image} alt={product.name} className="w-full aspect-square object-cover" />
-              {product.badge && <Badge className="absolute top-4 left-4 bg-gradient-gold text-primary-foreground">{product.badge}</Badge>}
-              {discount > 0 && <Badge variant="destructive" className="absolute top-4 right-4">-{discount}%</Badge>}
+            {/* Image Gallery */}
+            <div className="space-y-3">
+              <div className="relative rounded-2xl overflow-hidden bg-card border border-border group">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={selectedImageIndex}
+                    src={allImages[selectedImageIndex]}
+                    alt={`${product.name} - Image ${selectedImageIndex + 1}`}
+                    className="w-full aspect-square object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </AnimatePresence>
+                {product.badge && <Badge className="absolute top-4 left-4 bg-gradient-gold text-primary-foreground">{product.badge}</Badge>}
+                {discount > 0 && <Badge variant="destructive" className="absolute top-4 right-4">-{discount}%</Badge>}
+                
+                {/* Favorite button on image */}
+                <button
+                  onClick={() => { toggleFavorite(product.id); toast.success(isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"); }}
+                  className={`absolute bottom-4 right-4 p-3 rounded-full border border-border backdrop-blur-sm transition-all hover:scale-110 ${isFavorite(product.id) ? "bg-red-500 text-white border-red-500" : "bg-card/80 text-foreground"}`}
+                >
+                  <Heart size={20} className={isFavorite(product.id) ? "fill-current" : ""} />
+                </button>
+
+                {/* Navigation arrows */}
+                {allImages.length > 1 && (
+                  <>
+                    <button onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnail strip */}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImageIndex(idx)}
+                      className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${idx === selectedImageIndex ? "border-primary shadow-gold" : "border-border opacity-60 hover:opacity-100"}`}
+                    >
+                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col justify-center">
