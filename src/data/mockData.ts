@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[];
   category: string;
   rating: number;
   reviews: number;
@@ -34,6 +35,11 @@ export const products: Product[] = [
     price: 299.99,
     originalPrice: 399.99,
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&q=80",
+      "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=600&q=80",
+    ],
     category: "electronics",
     rating: 4.8,
     reviews: 342,
@@ -45,6 +51,11 @@ export const products: Product[] = [
     price: 449.99,
     originalPrice: 549.99,
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+      "https://images.unsplash.com/photo-1546868871-af0de0ae72be?w=600&q=80",
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&q=80",
+    ],
     category: "gadgets",
     rating: 4.9,
     reviews: 567,
@@ -56,6 +67,10 @@ export const products: Product[] = [
     price: 189.99,
     originalPrice: 249.99,
     image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&q=80",
+    ],
     category: "fashion",
     rating: 4.7,
     reviews: 213,
@@ -76,6 +91,10 @@ export const products: Product[] = [
     price: 129.99,
     originalPrice: 179.99,
     image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600&q=80",
+      "https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=600&q=80",
+    ],
     category: "beauty",
     rating: 4.6,
     reviews: 421,
@@ -96,6 +115,10 @@ export const products: Product[] = [
     price: 199.99,
     originalPrice: 259.99,
     image: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=400&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=600&q=80",
+      "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=600&q=80",
+    ],
     category: "electronics",
     rating: 4.7,
     reviews: 298,
