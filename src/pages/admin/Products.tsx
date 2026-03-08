@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useProductStore } from "@/store/productStore";
+import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { Product } from "@/data/mockData";
 import { Plus, Search, Pencil, Trash2, X, ImagePlus } from "lucide-react";
 import {
@@ -14,7 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Products() {
-  const { products: productList, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { data: productList = [], isLoading } = useProducts();
+  const addProduct = useAddProduct();
+  const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -63,18 +66,22 @@ export default function Products() {
     const mainImage = form.image || form.images[0] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80";
     
     if (editingProduct) {
-      updateProduct(editingProduct.id, {
-        name: form.name,
-        price: parseFloat(form.price),
-        category: form.category,
-        image: mainImage,
-        images: form.images.length > 0 ? form.images : undefined,
-        description: form.description,
+      updateProduct.mutate({
+        id: editingProduct.id,
+        data: {
+          name: form.name,
+          price: parseFloat(form.price),
+          category: form.category,
+          image: mainImage,
+          images: form.images.length > 0 ? form.images : undefined,
+          description: form.description,
+        },
+      }, {
+        onSuccess: () => toast({ title: "Product updated" }),
+        onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
       });
-      toast({ title: "Product updated" });
     } else {
-      const newProduct: Product = {
-        id: Date.now().toString(),
+      addProduct.mutate({
         name: form.name,
         price: parseFloat(form.price),
         category: form.category,
@@ -83,17 +90,24 @@ export default function Products() {
         rating: 0,
         reviews: 0,
         description: form.description,
-      };
-      addProduct(newProduct);
-      toast({ title: "Product added" });
+      }, {
+        onSuccess: () => toast({ title: "Product added" }),
+        onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+      });
     }
     setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => {
-    deleteProduct(id);
-    toast({ title: "Product deleted", variant: "destructive" });
+    deleteProduct.mutate(id, {
+      onSuccess: () => toast({ title: "Product deleted", variant: "destructive" }),
+      onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+    });
   };
+
+  if (isLoading) {
+    return <div className="text-center py-10 text-muted-foreground">Loading products...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -113,11 +127,10 @@ export default function Products() {
             <ScrollArea className="max-h-[70vh] pr-4">
               <div className="space-y-4 pt-2">
                 <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product name" /></div>
-                <div><Label>Price ($)</Label><Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0.00" /></div>
+                <div><Label>Price (Rs.)</Label><Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0" /></div>
                 <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="electronics" /></div>
                 <div><Label>Main Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
                 
-                {/* Multiple Images Section */}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2"><ImagePlus className="h-4 w-4" /> Product Images</Label>
                   <div className="flex gap-2">
@@ -151,7 +164,9 @@ export default function Products() {
                 </div>
 
                 <div><Label>Description</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
-                <Button onClick={handleSave} className="w-full">{editingProduct ? "Update Product" : "Add Product"}</Button>
+                <Button onClick={handleSave} className="w-full" disabled={addProduct.isPending || updateProduct.isPending}>
+                  {editingProduct ? "Update Product" : "Add Product"}
+                </Button>
               </div>
             </ScrollArea>
           </DialogContent>
@@ -171,7 +186,7 @@ export default function Products() {
               <CardContent className="p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="font-medium text-sm line-clamp-1">{product.name}</h3>
-                  <p className="text-primary font-bold text-sm mt-0.5">${product.price.toFixed(2)}</p>
+                  <p className="text-primary font-bold text-sm mt-0.5">Rs. {product.price.toLocaleString()}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <Badge variant="secondary" className="text-[10px]">{product.category}</Badge>
                     {product.images && product.images.length > 0 && (
