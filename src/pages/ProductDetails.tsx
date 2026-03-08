@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, ShoppingCart, Heart, ArrowLeft, Truck, Shield, RotateCcw, Check } from "lucide-react";
+import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw, Check } from "lucide-react";
 import { products } from "@/data/mockData";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import ProductReviews from "@/components/ProductReviews";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -25,25 +26,18 @@ const ProductDetails = () => {
         <Navbar />
         <main className="pt-24 pb-20 text-center">
           <p className="text-muted-foreground text-lg">Product not found</p>
-          <Link to="/shop">
-            <Button className="mt-4">Back to Shop</Button>
-          </Link>
+          <Link to="/shop"><Button className="mt-4">Back to Shop</Button></Link>
         </main>
         <Footer />
       </div>
     );
   }
 
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-
+  const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    for (let i = 0; i < quantity; i++) addToCart(product);
     toast.success(`${product.name} added to cart`);
   };
 
@@ -52,7 +46,6 @@ const ProductDetails = () => {
       <Navbar />
       <main className="pt-24 pb-20">
         <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <span>/</span>
@@ -61,145 +54,69 @@ const ProductDetails = () => {
             <span className="text-foreground">{product.name}</span>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16"
-          >
-            {/* Image */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
             <div className="relative rounded-2xl overflow-hidden bg-card border border-border">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full aspect-square object-cover"
-              />
-              {product.badge && (
-                <Badge className="absolute top-4 left-4 bg-gradient-gold text-primary-foreground">
-                  {product.badge}
-                </Badge>
-              )}
-              {discount > 0 && (
-                <Badge variant="destructive" className="absolute top-4 right-4">
-                  -{discount}%
-                </Badge>
-              )}
+              <img src={product.image} alt={product.name} className="w-full aspect-square object-cover" />
+              {product.badge && <Badge className="absolute top-4 left-4 bg-gradient-gold text-primary-foreground">{product.badge}</Badge>}
+              {discount > 0 && <Badge variant="destructive" className="absolute top-4 right-4">-{discount}%</Badge>}
             </div>
 
-            {/* Details */}
             <div className="flex flex-col justify-center">
-              <p className="text-sm text-primary font-medium uppercase tracking-wider mb-2">
-                {product.category}
-              </p>
-              <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4">
-                {product.name}
-              </h1>
+              <p className="text-sm text-primary font-medium uppercase tracking-wider mb-2">{product.category}</p>
+              <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4">{product.name}</h1>
 
-              {/* Rating */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      className={i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-border"}
-                    />
+                    <Star key={i} size={16} className={i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-border"} />
                   ))}
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  {product.rating} ({product.reviews} reviews)
-                </span>
+                <span className="text-sm text-muted-foreground">{product.rating} ({product.reviews} reviews)</span>
               </div>
 
-              {/* Price */}
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl font-display font-bold text-gradient-gold">
-                  ${product.price.toFixed(2)}
-                </span>
-                {product.originalPrice && (
-                  <span className="text-lg text-muted-foreground line-through">
-                    ${product.originalPrice.toFixed(2)}
-                  </span>
-                )}
-                {discount > 0 && (
-                  <Badge variant="destructive">Save {discount}%</Badge>
-                )}
+                <span className="text-3xl font-display font-bold text-gradient-gold">${product.price.toFixed(2)}</span>
+                {product.originalPrice && <span className="text-lg text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>}
+                {discount > 0 && <Badge variant="destructive">Save {discount}%</Badge>}
               </div>
 
-              {/* Description */}
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                {product.description || `Experience premium quality with the ${product.name}. Crafted with attention to detail and designed for the modern lifestyle. This product combines functionality with elegant design to deliver an exceptional experience.`}
+                {product.description || `Experience premium quality with the ${product.name}. Crafted with attention to detail and designed for the modern lifestyle.`}
               </p>
 
-              {/* Quantity & Actions */}
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center border border-border rounded-lg">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    -
-                  </button>
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors">-</button>
                   <span className="px-4 py-2 font-medium">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    +
-                  </button>
+                  <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors">+</button>
                 </div>
-                <Button
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-gradient-gold text-primary-foreground font-semibold shadow-gold hover:opacity-90 gap-2"
-                  size="lg"
-                >
+                <Button onClick={handleAddToCart} className="flex-1 bg-gradient-gold text-primary-foreground font-semibold shadow-gold hover:opacity-90 gap-2" size="lg">
                   <ShoppingCart size={18} />
                   {isInCart(product.id) ? "Add More" : "Add to Cart"}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => {
-                    toggleFavorite(product.id);
-                    toast.success(
-                      isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"
-                    );
-                  }}
-                  className={`border-border ${isFavorite(product.id) ? "text-red-500" : ""}`}
-                >
+                <Button variant="outline" size="lg" onClick={() => { toggleFavorite(product.id); toast.success(isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"); }} className={`border-border ${isFavorite(product.id) ? "text-red-500" : ""}`}>
                   <Heart size={18} className={isFavorite(product.id) ? "fill-current" : ""} />
                 </Button>
               </div>
 
-              {/* Features */}
               <div className="grid grid-cols-3 gap-4 border-t border-border pt-6">
                 <div className="flex flex-col items-center text-center gap-2">
-                  <Truck size={20} className="text-primary" />
-                  <span className="text-xs text-muted-foreground">Free Shipping</span>
+                  <Truck size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Free Shipping</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
-                  <Shield size={20} className="text-primary" />
-                  <span className="text-xs text-muted-foreground">Secure Payment</span>
+                  <Shield size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Secure Payment</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
-                  <RotateCcw size={20} className="text-primary" />
-                  <span className="text-xs text-muted-foreground">Easy Returns</span>
+                  <RotateCcw size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Easy Returns</span>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Specs */}
           <div className="bg-card border border-border rounded-xl p-6 mb-16">
             <h2 className="text-xl font-display font-bold mb-4">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                ["Brand", "Elite Bazar"],
-                ["Category", product.category],
-                ["Rating", `${product.rating}/5`],
-                ["Reviews", `${product.reviews} reviews`],
-                ["Availability", "In Stock"],
-                ["Warranty", "1 Year"],
-              ].map(([label, value]) => (
+              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Warranty", "1 Year"]].map(([label, value]) => (
                 <div key={label} className="flex items-center gap-2 py-2 border-b border-border/50">
                   <Check size={14} className="text-primary shrink-0" />
                   <span className="text-sm text-muted-foreground">{label}:</span>
@@ -209,16 +126,14 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* Related Products */}
+          {/* Reviews Section */}
+          <ProductReviews productId={product.id} />
+
           {related.length > 0 && (
             <div>
-              <h2 className="text-2xl font-display font-bold mb-6">
-                Related <span className="text-gradient-gold">Products</span>
-              </h2>
+              <h2 className="text-2xl font-display font-bold mb-6">Related <span className="text-gradient-gold">Products</span></h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {related.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
+                {related.map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
             </div>
           )}

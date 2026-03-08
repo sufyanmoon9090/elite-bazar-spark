@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,77 +6,171 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Store, Bell, Shield, Palette } from "lucide-react";
+import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail } from "lucide-react";
+import { useAllSiteSettings, useUpdateSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
   const { toast } = useToast();
-  const [store, setStore] = useState({ name: "Elite Bazar", email: "admin@elitebazar.com", currency: "USD", taxRate: "8.5" });
-  const [notifications, setNotifications] = useState({ orderEmail: true, lowStock: true, newCustomer: false, weeklyReport: true });
-  const [security, setSecurity] = useState({ twoFactor: false, sessionTimeout: "30" });
+  const { data: allSettings, isLoading } = useAllSiteSettings();
+  const updateSetting = useUpdateSiteSetting();
 
-  const handleSave = () => toast({ title: "Settings saved successfully" });
+  // Local state for each section
+  const [hero, setHero] = useState<any>({});
+  const [catHeading, setCatHeading] = useState<any>({});
+  const [deals, setDeals] = useState<any>({});
+  const [whyChoose, setWhyChoose] = useState<any>({});
+  const [testimonialsH, setTestimonialsH] = useState<any>({});
+  const [blogH, setBlogH] = useState<any>({});
+  const [newsletter, setNewsletter] = useState<any>({});
+
+  useEffect(() => {
+    if (allSettings) {
+      setHero(allSettings.hero || {});
+      setCatHeading(allSettings.categories_heading || {});
+      setDeals(allSettings.deals || {});
+      setWhyChoose(allSettings.why_choose_us || {});
+      setTestimonialsH(allSettings.testimonials_heading || {});
+      setBlogH(allSettings.blog_heading || {});
+      setNewsletter(allSettings.newsletter || {});
+    }
+  }, [allSettings]);
+
+  const saveAll = async () => {
+    try {
+      await Promise.all([
+        updateSetting.mutateAsync({ key: "hero", data: hero }),
+        updateSetting.mutateAsync({ key: "categories_heading", data: catHeading }),
+        updateSetting.mutateAsync({ key: "deals", data: deals }),
+        updateSetting.mutateAsync({ key: "why_choose_us", data: whyChoose }),
+        updateSetting.mutateAsync({ key: "testimonials_heading", data: testimonialsH }),
+        updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
+        updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
+      ]);
+      toast({ title: "All settings saved!" });
+    } catch {
+      toast({ title: "Error saving settings", variant: "destructive" });
+    }
+  };
+
+  if (isLoading) return <p className="text-muted-foreground">Loading settings...</p>;
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h2 className="text-2xl font-display font-bold">Settings</h2>
-        <p className="text-muted-foreground text-sm">Manage your store configuration</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-display font-bold">Landing Page Settings</h2>
+          <p className="text-muted-foreground text-sm">Customize every section of your landing page</p>
+        </div>
+        <Button onClick={saveAll} disabled={updateSetting.isPending} className="gap-2">
+          <Save className="h-4 w-4" /> {updateSetting.isPending ? "Saving..." : "Save All"}
+        </Button>
       </div>
 
-      {/* Store Info */}
+      {/* Hero Section */}
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Store className="h-4 w-4" /> Store Information</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><Label>Store Name</Label><Input value={store.name} onChange={(e) => setStore({ ...store, name: e.target.value })} /></div>
-            <div><Label>Contact Email</Label><Input value={store.email} onChange={(e) => setStore({ ...store, email: e.target.value })} /></div>
-            <div><Label>Currency</Label>
-              <select value={store.currency} onChange={(e) => setStore({ ...store, currency: e.target.value })} className="w-full h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="PKR">PKR (₨)</option>
-              </select>
-            </div>
-            <div><Label>Tax Rate (%)</Label><Input type="number" value={store.taxRate} onChange={(e) => setStore({ ...store, taxRate: e.target.value })} /></div>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4" /> Hero Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div><Label>Badge Text</Label><Input value={hero.badge || ""} onChange={(e) => setHero({ ...hero, badge: e.target.value })} /></div>
+          <div><Label>Title (highlighted)</Label><Input value={hero.title || ""} onChange={(e) => setHero({ ...hero, title: e.target.value })} /></div>
+          <div><Label>Subtitle</Label><Input value={hero.subtitle || ""} onChange={(e) => setHero({ ...hero, subtitle: e.target.value })} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Button 1 Text</Label><Input value={hero.button1 || ""} onChange={(e) => setHero({ ...hero, button1: e.target.value })} /></div>
+            <div><Label>Button 2 Text</Label><Input value={hero.button2 || ""} onChange={(e) => setHero({ ...hero, button2: e.target.value })} /></div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Notifications */}
-      <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Bell className="h-4 w-4" /> Notifications</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          {([
-            ["orderEmail", "Order Confirmation Emails", "Send email notifications for new orders"],
-            ["lowStock", "Low Stock Alerts", "Get notified when product stock is low"],
-            ["newCustomer", "New Customer Alerts", "Notify when new customers register"],
-            ["weeklyReport", "Weekly Reports", "Receive weekly performance summary"],
-          ] as const).map(([key, label, desc]) => (
-            <div key={key} className="flex items-center justify-between">
-              <div><p className="text-sm font-medium">{label}</p><p className="text-xs text-muted-foreground">{desc}</p></div>
-              <Switch checked={notifications[key]} onCheckedChange={(v) => setNotifications({ ...notifications, [key]: v })} />
+          <Separator />
+          <Label className="text-xs text-muted-foreground">Stats</Label>
+          {(hero.stats || []).map((stat: any, i: number) => (
+            <div key={i} className="grid grid-cols-2 gap-3">
+              <Input value={stat.value} onChange={(e) => { const s = [...hero.stats]; s[i] = { ...s[i], value: e.target.value }; setHero({ ...hero, stats: s }); }} placeholder="Value" />
+              <Input value={stat.label} onChange={(e) => { const s = [...hero.stats]; s[i] = { ...s[i], label: e.target.value }; setHero({ ...hero, stats: s }); }} placeholder="Label" />
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* Security */}
+      {/* Categories Heading */}
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Shield className="h-4 w-4" /> Security</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div><p className="text-sm font-medium">Two-Factor Authentication</p><p className="text-xs text-muted-foreground">Add extra layer of security</p></div>
-            <Switch checked={security.twoFactor} onCheckedChange={(v) => setSecurity({ ...security, twoFactor: v })} />
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Layout className="h-4 w-4" /> Categories Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={catHeading.title || ""} onChange={(e) => setCatHeading({ ...catHeading, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={catHeading.highlight || ""} onChange={(e) => setCatHeading({ ...catHeading, highlight: e.target.value })} /></div>
           </div>
-          <div className="max-w-xs">
-            <Label>Session Timeout (minutes)</Label>
-            <Input type="number" value={security.sessionTimeout} onChange={(e) => setSecurity({ ...security, sessionTimeout: e.target.value })} />
+          <div><Label>Subtitle</Label><Input value={catHeading.subtitle || ""} onChange={(e) => setCatHeading({ ...catHeading, subtitle: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
+      {/* Deals Section */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Zap className="h-4 w-4" /> Deals Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div><Label>Badge</Label><Input value={deals.badge || ""} onChange={(e) => setDeals({ ...deals, badge: e.target.value })} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={deals.title || ""} onChange={(e) => setDeals({ ...deals, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={deals.highlight || ""} onChange={(e) => setDeals({ ...deals, highlight: e.target.value })} /></div>
+          </div>
+          <div><Label>Subtitle</Label><Input value={deals.subtitle || ""} onChange={(e) => setDeals({ ...deals, subtitle: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
+      {/* Why Choose Us */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Award className="h-4 w-4" /> Why Choose Us</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={whyChoose.title || ""} onChange={(e) => setWhyChoose({ ...whyChoose, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={whyChoose.highlight || ""} onChange={(e) => setWhyChoose({ ...whyChoose, highlight: e.target.value })} /></div>
+          </div>
+          <Separator />
+          <Label className="text-xs text-muted-foreground">Features</Label>
+          {(whyChoose.features || []).map((f: any, i: number) => (
+            <div key={i} className="grid grid-cols-2 gap-3">
+              <Input value={f.title} onChange={(e) => { const fs = [...whyChoose.features]; fs[i] = { ...fs[i], title: e.target.value }; setWhyChoose({ ...whyChoose, features: fs }); }} placeholder="Title" />
+              <Input value={f.desc} onChange={(e) => { const fs = [...whyChoose.features]; fs[i] = { ...fs[i], desc: e.target.value }; setWhyChoose({ ...whyChoose, features: fs }); }} placeholder="Description" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Testimonials Heading */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Testimonials Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={testimonialsH.title || ""} onChange={(e) => setTestimonialsH({ ...testimonialsH, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={testimonialsH.highlight || ""} onChange={(e) => setTestimonialsH({ ...testimonialsH, highlight: e.target.value })} /></div>
           </div>
         </CardContent>
       </Card>
 
-      <Button onClick={handleSave} className="gap-2"><Save className="h-4 w-4" /> Save Settings</Button>
+      {/* Blog Heading */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><BookOpen className="h-4 w-4" /> Blog Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={blogH.title || ""} onChange={(e) => setBlogH({ ...blogH, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={blogH.highlight || ""} onChange={(e) => setBlogH({ ...blogH, highlight: e.target.value })} /></div>
+          </div>
+          <div><Label>Subtitle</Label><Input value={blogH.subtitle || ""} onChange={(e) => setBlogH({ ...blogH, subtitle: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
+      {/* Newsletter */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" /> Newsletter Section</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={newsletter.title || ""} onChange={(e) => setNewsletter({ ...newsletter, title: e.target.value })} /></div>
+            <div><Label>Highlight</Label><Input value={newsletter.highlight || ""} onChange={(e) => setNewsletter({ ...newsletter, highlight: e.target.value })} /></div>
+          </div>
+          <div><Label>Subtitle</Label><Input value={newsletter.subtitle || ""} onChange={(e) => setNewsletter({ ...newsletter, subtitle: e.target.value })} /></div>
+          <div><Label>Button Text</Label><Input value={newsletter.button || ""} onChange={(e) => setNewsletter({ ...newsletter, button: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
+      <Button onClick={saveAll} disabled={updateSetting.isPending} className="gap-2 w-full">
+        <Save className="h-4 w-4" /> {updateSetting.isPending ? "Saving..." : "Save All Settings"}
+      </Button>
     </div>
   );
 }
