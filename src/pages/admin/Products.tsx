@@ -9,6 +9,7 @@ import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, 
 import { useCategories } from "@/hooks/useCategories";
 import { Product } from "@/data/mockData";
 import { Plus, Search, Pencil, Trash2, X, ImagePlus, Layers } from "lucide-react";
+import ImageUpload, { MultiImageUpload } from "@/components/admin/ImageUpload";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -211,35 +212,9 @@ export default function Products() {
                     ))}
                   </select>
                 </div>
-                <div><Label>Main Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
+                <ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} folder="products" label="Main Image" />
 
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><ImagePlus className="h-4 w-4" /> Product Images</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      value={newImageUrl}
-                      onChange={(e) => setNewImageUrl(e.target.value)}
-                      placeholder="Paste image URL and click Add"
-                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImageUrl())}
-                    />
-                    <Button type="button" variant="secondary" onClick={addImageUrl} className="shrink-0">Add</Button>
-                  </div>
-                  {form.images.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                      {form.images.map((img, idx) => (
-                        <div key={idx} className="relative group rounded-lg overflow-hidden border border-border">
-                          <img src={img} alt={`Image ${idx + 1}`} className="w-full aspect-square object-cover" />
-                          <button
-                            onClick={() => removeImage(idx)}
-                            className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <MultiImageUpload value={form.images} onChange={(urls) => setForm({ ...form, images: urls })} folder="products" label="Additional Images" />
 
                 <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
                 <Button onClick={handleSave} className="w-full" disabled={addProduct.isPending || updateProduct.isPending}>
@@ -328,7 +303,7 @@ export default function Products() {
                   <div><Label className="text-xs">Price (Rs.)</Label><Input type="number" value={variantForm.price} onChange={(e) => setVariantForm({ ...variantForm, price: e.target.value })} placeholder="0" /></div>
                   <div><Label className="text-xs">Original Price</Label><Input type="number" value={variantForm.original_price} onChange={(e) => setVariantForm({ ...variantForm, original_price: e.target.value })} placeholder="Optional" /></div>
                 </div>
-                <div><Label className="text-xs">Image URL</Label><Input value={variantForm.image} onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })} placeholder="https://..." /></div>
+                <ImageUpload value={variantForm.image} onChange={(url) => setVariantForm({ ...variantForm, image: url })} folder="variants" label="Variant Image" />
                 <div><Label className="text-xs">Description</Label><Textarea value={variantForm.description} onChange={(e) => setVariantForm({ ...variantForm, description: e.target.value })} placeholder="Variant specific description" rows={2} /></div>
                 <div className="flex gap-2">
                   <Button onClick={handleSaveVariant} className="flex-1" disabled={addVariant.isPending || updateVariant.isPending}>
