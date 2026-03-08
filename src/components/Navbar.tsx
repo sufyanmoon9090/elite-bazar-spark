@@ -5,11 +5,11 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useAuth } from "@/context/AuthContext";
 import { useUnreadCount } from "@/hooks/useNotifications";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
-
-const ADMIN_EMAIL = "sufyan@gmail.com";
 
 const navLinks = [
   { label: "Home", to: "/" },
