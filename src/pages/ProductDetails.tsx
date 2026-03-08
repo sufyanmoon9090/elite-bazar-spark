@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { useProductVariants, ProductVariant } from "@/hooks/useProductVariants";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { Button } from "@/components/ui/button";
@@ -11,16 +12,29 @@ import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import ProductReviews from "@/components/ProductReviews";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: products = [], isLoading } = useProducts();
+  const { data: variants = [] } = useProductVariants(id);
   const product = products.find((p) => p.id === id);
   const { addToCart, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+
+  // When variants load, auto-select none (show base product)
+  const selectedVariant = useMemo(() => {
+    return variants.find((v) => v.id === selectedVariantId) || null;
+  }, [variants, selectedVariantId]);
+
+  // Active price/description based on variant
+  const activePrice = selectedVariant ? selectedVariant.price : product?.price ?? 0;
+  const activeOriginalPrice = selectedVariant ? selectedVariant.original_price : product?.originalPrice;
+  const activeDescription = selectedVariant?.description || product?.description;
+  const activeImage = selectedVariant?.image || undefined;
 
   if (isLoading) {
     return (
@@ -47,17 +61,33 @@ const ProductDetails = () => {
     );
   }
 
-  const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
-  const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+  // Build image list: if variant has image, show that first; otherwise product images
+  const baseImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  const allImages = activeImage ? [activeImage, ...baseImages.filter(img => img !== activeImage)] : baseImages;
+  
+  const discount = activeOriginalPrice ? Math.round(((activeOriginalPrice - activePrice) / activeOriginalPrice) * 100) : 0;
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) addToCart(product);
-    toast.success(`${product.name} added to cart`);
+    const cartProduct = {
+      ...product,
+      price: activePrice,
+      originalPrice: activeOriginalPrice ?? undefined,
+      // Append variant info to name if variant selected
+      name: selectedVariant ? `${product.name} - ${selectedVariant.variant_name}` : product.name,
+      image: allImages[0],
+    };
+    for (let i = 0; i < quantity; i++) addToCart(cartProduct);
+    toast.success(`${cartProduct.name} added to cart`);
   };
 
   const nextImage = () => setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
   const prevImage = () => setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+
+  const handleVariantSelect = (variant: ProductVariant) => {
+    setSelectedVariantId(variant.id === selectedVariantId ? null : variant.id);
+    setSelectedImageIndex(0);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,7 +107,7 @@ const ProductDetails = () => {
               <div className="relative rounded-2xl overflow-hidden bg-card border border-border group">
                 <AnimatePresence mode="wait">
                   <motion.img
-                    key={selectedImageIndex}
+                    key={`${selectedImageIndex}-${selectedVariantId}`}
                     src={allImages[selectedImageIndex]}
                     alt={`${product.name} - Image ${selectedImageIndex + 1}`}
                     className="w-full aspect-square object-cover"
@@ -89,7 +119,7 @@ const ProductDetails = () => {
                 </AnimatePresence>
                 {product.badge && <Badge className="absolute top-4 left-4 bg-gradient-gold text-primary-foreground">{product.badge}</Badge>}
                 {discount > 0 && <Badge variant="destructive" className="absolute top-4 right-4">-{discount}%</Badge>}
-                
+
                 <button
                   onClick={() => { toggleFavorite(product.id); toast.success(isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"); }}
                   className={`absolute bottom-4 right-4 p-3 rounded-full border border-border backdrop-blur-sm transition-all hover:scale-110 ${isFavorite(product.id) ? "bg-red-500 text-white border-red-500" : "bg-card/80 text-foreground"}`}
@@ -137,14 +167,44 @@ const ProductDetails = () => {
                 <span className="text-sm text-muted-foreground">{product.rating} ({product.reviews} reviews)</span>
               </div>
 
+              {/* Variant Selector */}
+              {variants.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-sm font-medium mb-2">
+                    Variant: <span className="text-primary">{selectedVariant?.variant_name || "Default"}</span>
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    {variants.map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => handleVariantSelect(v)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
+                          selectedVariantId === v.id
+                            ? "border-primary bg-primary/10"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        {v.image && (
+                          <img src={v.image} alt={v.variant_name} className="w-10 h-10 rounded object-cover" />
+                        )}
+                        <div className="text-left">
+                          <p className="text-xs font-medium">{v.variant_name}</p>
+                          <p className="text-xs text-primary">Rs. {v.price.toLocaleString()}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl font-display font-bold text-gradient-gold">Rs. {product.price.toLocaleString()}</span>
-                {product.originalPrice && <span className="text-lg text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>}
+                <span className="text-3xl font-display font-bold text-gradient-gold">Rs. {activePrice.toLocaleString()}</span>
+                {activeOriginalPrice && <span className="text-lg text-muted-foreground line-through">Rs. {activeOriginalPrice.toLocaleString()}</span>}
                 {discount > 0 && <Badge variant="destructive">Save {discount}%</Badge>}
               </div>
 
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                {product.description || `Experience premium quality with the ${product.name}. Crafted with attention to detail and designed for the modern lifestyle.`}
+                {activeDescription || `Experience premium quality with the ${product.name}. Crafted with attention to detail and designed for the modern lifestyle.`}
               </p>
 
               <div className="flex items-center gap-4 mb-6">
