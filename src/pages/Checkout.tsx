@@ -12,9 +12,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { CreditCard, MapPin, Truck, Check, ArrowLeft, Banknote } from "lucide-react";
+import { provinces, getCitiesByProvince } from "@/data/pakistanCities";
 
 const steps = ["Address", "Shipping", "Payment", "Confirmation"];
-const pakistanCities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta", "Sialkot", "Gujranwala", "Hyderabad", "Bahawalpur"];
 
 const Checkout = () => {
   const { items, totalPrice, totalItems, clearCart } = useCart();
