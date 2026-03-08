@@ -1,7 +1,9 @@
-import { products } from "@/data/mockData";
+import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 
 const TrendingProducts = () => {
+  const { data: products = [] } = useProducts();
+
   return (
     <section className="py-20 bg-surface">
       <div className="container mx-auto px-4">

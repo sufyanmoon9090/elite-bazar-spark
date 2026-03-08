@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { categories } from "@/data/mockData";
-import { useProductStore } from "@/store/productStore";
+import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -19,7 +19,7 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState("default");
 
-  const { products } = useProductStore();
+  const { data: products = [], isLoading } = useProducts();
 
   const filtered = useMemo(() => {
     let result = products;
@@ -33,7 +33,7 @@ const Shop = () => {
     if (sortBy === "price-high") result = [...result].sort((a, b) => b.price - a.price);
     if (sortBy === "rating") result = [...result].sort((a, b) => b.rating - a.rating);
     return result;
-  }, [search, selectedCategory, sortBy]);
+  }, [products, search, selectedCategory, sortBy]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,43 +47,18 @@ const Shop = () => {
             <p className="text-muted-foreground">Discover premium products curated for you</p>
           </motion.div>
 
-          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-1 max-w-md">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search products..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-card border-border"
-              />
+              <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-card border-border" />
             </div>
             <div className="flex gap-2 flex-wrap">
-              <Button
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory("all")}
-                className={selectedCategory === "all" ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}
-              >
-                All
-              </Button>
+              <Button variant={selectedCategory === "all" ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory("all")} className={selectedCategory === "all" ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}>All</Button>
               {categories.map((cat) => (
-                <Button
-                  key={cat.id}
-                  variant={selectedCategory === cat.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={selectedCategory === cat.id ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}
-                >
-                  {cat.name}
-                </Button>
+                <Button key={cat.id} variant={selectedCategory === cat.id ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory(cat.id)} className={selectedCategory === cat.id ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}>{cat.name}</Button>
               ))}
             </div>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground"
-            >
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground">
               <option value="default">Sort by</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -91,17 +66,14 @@ const Shop = () => {
             </select>
           </div>
 
-          {/* Products */}
-          {filtered.length > 0 ? (
+          {isLoading ? (
+            <div className="text-center py-20"><p className="text-muted-foreground">Loading products...</p></div>
+          ) : filtered.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {filtered.map((product) => (<ProductCard key={product.id} product={product} />))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">No products found matching your criteria.</p>
-            </div>
+            <div className="text-center py-20"><p className="text-muted-foreground">No products found matching your criteria.</p></div>
           )}
         </div>
       </main>

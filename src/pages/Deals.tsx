@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { products } from "@/data/mockData";
+import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import DealsSection from "@/components/DealsSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Deals = () => {
+  const { data: products = [] } = useProducts();
   const dealsProducts = products.filter((p) => p.originalPrice);
 
   return (

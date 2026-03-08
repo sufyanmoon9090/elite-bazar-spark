@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { products } from "@/data/mockData";
+import { useProducts } from "@/hooks/useProducts";
 import { useFavorites } from "@/context/FavoritesContext";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 
 const Favorites = () => {
   const { favorites } = useFavorites();
+  const { data: products = [] } = useProducts();
   const favoriteProducts = products.filter((p) => favorites.includes(p.id));
 
   return (
