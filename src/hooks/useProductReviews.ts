@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 export interface ProductReview {
   id: string;
   product_id: string;
-  user_email: string;
   user_name: string;
   rating: number;
   comment: string;
@@ -15,8 +14,9 @@ export function useProductReviews(productId: string) {
   return useQuery({
     queryKey: ["product_reviews", productId],
     queryFn: async () => {
+      // Use the public view that excludes user_email
       const { data, error } = await supabase
-        .from("product_reviews")
+        .from("product_reviews_public" as any)
         .select("*")
         .eq("product_id", productId)
         .order("created_at", { ascending: false });
