@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
 import PageTransition from "@/components/PageTransition";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
@@ -38,6 +39,11 @@ import AdminCategories from "./pages/admin/Categories";
 import AdminBlogPosts from "./pages/admin/BlogPosts";
 
 const queryClient = new QueryClient();
+
+const PushNotificationListener = () => {
+  usePushNotifications();
+  return null;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -90,6 +96,7 @@ const App = () => (
               <Sonner />
               <WhatsAppButton />
               <BrowserRouter>
+                <PushNotificationListener />
                 <AnimatedRoutes />
               </BrowserRouter>
             </FavoritesProvider>
