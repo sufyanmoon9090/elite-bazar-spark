@@ -75,12 +75,22 @@ export default function Settings() {
         <CardContent className="space-y-3">
           <div><Label>Site Name (changes everywhere)</Label><Input value={general.site_name || ""} onChange={(e) => setGeneral({ ...general, site_name: e.target.value })} placeholder="Elite Bazar" /></div>
           <div>
-            <Label>Logo URL (direct image link, e.g. imgbb)</Label>
-            <Input value={general.logo_url || ""} onChange={(e) => setGeneral({ ...general, logo_url: e.target.value })} placeholder="https://i.ibb.co/your-logo.png" />
+            <Label>Light Theme Logo URL</Label>
+            <Input value={general.logo_url || ""} onChange={(e) => setGeneral({ ...general, logo_url: e.target.value })} placeholder="https://i.ibb.co/your-light-logo.png" />
             {general.logo_url && (
               <div className="mt-2 flex items-center gap-3">
-                <img src={general.logo_url} alt="Logo preview" className="h-12 w-12 object-contain rounded border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                <span className="text-xs text-muted-foreground">Preview</span>
+                <img src={general.logo_url} alt="Light logo preview" className="h-12 w-12 object-contain rounded border border-border bg-white" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <span className="text-xs text-muted-foreground">Light Preview</span>
+              </div>
+            )}
+          </div>
+          <div>
+            <Label>Dark Theme Logo URL</Label>
+            <Input value={general.dark_logo_url || ""} onChange={(e) => setGeneral({ ...general, dark_logo_url: e.target.value })} placeholder="https://i.ibb.co/your-dark-logo.png" />
+            {general.dark_logo_url && (
+              <div className="mt-2 flex items-center gap-3">
+                <img src={general.dark_logo_url} alt="Dark logo preview" className="h-12 w-12 object-contain rounded border border-border bg-black" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <span className="text-xs text-muted-foreground">Dark Preview</span>
               </div>
             )}
           </div>
