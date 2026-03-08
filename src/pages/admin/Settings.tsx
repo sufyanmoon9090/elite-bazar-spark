@@ -161,6 +161,11 @@ export default function Settings() {
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Award className="h-4 w-4" /> Why Choose Us</CardTitle></CardHeader>
         <CardContent className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label>Show Why Choose Us Section</Label>
+            <Switch checked={whyChoose.enabled !== false} onCheckedChange={(v) => setWhyChoose({ ...whyChoose, enabled: v })} />
+          </div>
+          <Separator />
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Title</Label><Input value={whyChoose.title || ""} onChange={(e) => setWhyChoose({ ...whyChoose, title: e.target.value })} /></div>
             <div><Label>Highlight</Label><Input value={whyChoose.highlight || ""} onChange={(e) => setWhyChoose({ ...whyChoose, highlight: e.target.value })} /></div>
