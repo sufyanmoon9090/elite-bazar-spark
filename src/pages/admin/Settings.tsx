@@ -69,6 +69,25 @@ export default function Settings() {
         </Button>
       </div>
 
+      {/* General / Branding */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4" /> General / Branding</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div><Label>Site Name (changes everywhere)</Label><Input value={general.site_name || ""} onChange={(e) => setGeneral({ ...general, site_name: e.target.value })} placeholder="Elite Bazar" /></div>
+          <div>
+            <Label>Logo URL (direct image link, e.g. imgbb)</Label>
+            <Input value={general.logo_url || ""} onChange={(e) => setGeneral({ ...general, logo_url: e.target.value })} placeholder="https://i.ibb.co/your-logo.png" />
+            {general.logo_url && (
+              <div className="mt-2 flex items-center gap-3">
+                <img src={general.logo_url} alt="Logo preview" className="h-12 w-12 object-contain rounded border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <span className="text-xs text-muted-foreground">Preview</span>
+              </div>
+            )}
+          </div>
+          <div><Label>Footer Description</Label><Input value={general.footer_text || ""} onChange={(e) => setGeneral({ ...general, footer_text: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
       {/* Hero Section */}
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4" /> Hero Section</CardTitle></CardHeader>
