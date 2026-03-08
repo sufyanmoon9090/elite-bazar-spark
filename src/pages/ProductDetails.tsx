@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { useProductReviews } from "@/hooks/useProductReviews";
 import { useProductVariants, ProductVariant } from "@/hooks/useProductVariants";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -18,6 +19,7 @@ const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: products = [], isLoading } = useProducts();
   const { data: variants = [] } = useProductVariants(id);
+  const { data: liveReviews = [] } = useProductReviews(id || "");
   const product = products.find((p) => p.id === id);
   const { addToCart, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -251,7 +253,7 @@ const ProductDetails = () => {
           <div className="bg-card border border-border rounded-xl p-6 mb-16">
             <h2 className="text-xl font-display font-bold mb-4">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Delivery", "All Pakistan"], ["Payment", "Cash on Delivery"]].map(([label, value]) => (
+              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${liveReviews.length > 0 ? (liveReviews.reduce((s, r) => s + r.rating, 0) / liveReviews.length).toFixed(1) : product.rating}/5`], ["Reviews", `${liveReviews.length || product.reviews} reviews`], ["Availability", "In Stock"], ["Delivery", "All Pakistan"], ["Payment", "Cash on Delivery"]].map(([label, value]) => (
                 <div key={label} className="flex items-center gap-2 py-2 border-b border-border/50">
                   <Check size={14} className="text-primary shrink-0" />
                   <span className="text-sm text-muted-foreground">{label}:</span>
