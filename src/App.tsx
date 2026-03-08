@@ -95,6 +95,7 @@ const App = () => (
             <FavoritesProvider>
               <Toaster />
               <Sonner />
+              <OfflineIndicator />
               <WhatsAppButton />
               <BrowserRouter>
                 <PushNotificationListener />
