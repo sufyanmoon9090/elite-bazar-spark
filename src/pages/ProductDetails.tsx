@@ -104,7 +104,18 @@ const ProductDetails = () => {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
             <div className="space-y-3">
-              <div className="relative rounded-2xl overflow-hidden bg-card border border-border group">
+              <div
+                className="relative rounded-2xl overflow-hidden bg-card border border-border group"
+                onTouchStart={(e) => {
+                  (e.currentTarget as any)._touchStartX = e.touches[0].clientX;
+                }}
+                onTouchEnd={(e) => {
+                  const startX = (e.currentTarget as any)._touchStartX;
+                  if (startX === undefined) return;
+                  const diff = startX - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 50) { diff > 0 ? nextImage() : prevImage(); }
+                }}
+              >
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={`${selectedImageIndex}-${selectedVariantId}`}
@@ -130,10 +141,10 @@ const ProductDetails = () => {
 
                 {allImages.length > 1 && (
                   <>
-                    <button onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
+                    <button onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground transition-opacity hover:scale-110">
                       <ChevronLeft size={20} />
                     </button>
-                    <button onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
+                    <button onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border text-foreground transition-opacity hover:scale-110">
                       <ChevronRight size={20} />
                     </button>
                   </>
