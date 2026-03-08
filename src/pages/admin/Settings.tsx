@@ -136,6 +136,11 @@ export default function Settings() {
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Zap className="h-4 w-4" /> Deals Section</CardTitle></CardHeader>
         <CardContent className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label>Show Deals Section</Label>
+            <Switch checked={deals.enabled !== false} onCheckedChange={(v) => setDeals({ ...deals, enabled: v })} />
+          </div>
+          <Separator />
           <div><Label>Badge</Label><Input value={deals.badge || ""} onChange={(e) => setDeals({ ...deals, badge: e.target.value })} /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Title</Label><Input value={deals.title || ""} onChange={(e) => setDeals({ ...deals, title: e.target.value })} /></div>
