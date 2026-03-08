@@ -76,22 +76,24 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
-            <Toaster />
-            <Sonner />
-            <WhatsAppButton />
-            <BrowserRouter>
-              <AnimatedRoutes />
-            </BrowserRouter>
-          </FavoritesProvider>
-        </CartProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <CartProvider>
+            <FavoritesProvider>
+              <Toaster />
+              <Sonner />
+              <WhatsAppButton />
+              <BrowserRouter>
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </FavoritesProvider>
+          </CartProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
