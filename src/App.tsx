@@ -37,6 +37,7 @@ const App = () => (
           <FavoritesProvider>
             <Toaster />
             <Sonner />
+            <WhatsAppButton />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
