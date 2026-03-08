@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import defaultLogo from "@/assets/logo.png";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useTheme } from "next-themes";
 
 const footerLinks = {
   "Quick Links": [
