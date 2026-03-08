@@ -264,12 +264,16 @@ export default function Products() {
               <CardContent className="p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="font-medium text-sm line-clamp-1">{product.name}</h3>
-                  <p className="text-primary font-bold text-sm mt-0.5">Rs. {product.price.toLocaleString()}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Badge variant="secondary" className="text-[10px]">{product.category}</Badge>
-                    {product.images && product.images.length > 0 && (
-                      <Badge variant="outline" className="text-[10px]">{product.images.length} imgs</Badge>
-                    )}
+                   <p className="text-primary font-bold text-sm mt-0.5">Rs. {product.price.toLocaleString()}</p>
+                   <div className="flex items-center gap-1 mt-1">
+                     <Badge variant="secondary" className="text-[10px]">{product.category}</Badge>
+                     {product.images && product.images.length > 0 && (
+                       <Badge variant="outline" className="text-[10px]">{product.images.length} imgs</Badge>
+                     )}
+                     <Badge variant={(product as any).in_stock === false ? "destructive" : "default"} className="text-[10px]">
+                       {(product as any).in_stock === false ? "Out of Stock" : "In Stock"}
+                     </Badge>
+                   </div>
                   </div>
                 </div>
                 <div className="flex gap-1 mt-2">
