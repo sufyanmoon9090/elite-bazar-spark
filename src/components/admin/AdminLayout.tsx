@@ -2,13 +2,23 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-
-const ADMIN_EMAIL = "sufyan@gmail.com";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function AdminLayout() {
   const { user, loading } = useAuth();
 
-  if (loading) {
+  const { data: isAdmin, isLoading: adminLoading } = useQuery({
+    queryKey: ["is_admin", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("is_admin");
+      if (error) return false;
+      return data as boolean;
+    },
+    enabled: !!user,
+  });
+
+  if (loading || adminLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
@@ -16,7 +26,7 @@ export default function AdminLayout() {
     );
   }
 
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!user || !isAdmin) {
     return <Navigate to="/auth" replace />;
   }
 

@@ -92,9 +92,10 @@ const ProductReviews = ({ productId }: Props) => {
         </div>
         <div className="flex gap-2">
           <Input
-            placeholder={user ? "Write your comment..." : "Login first to review"}
+            placeholder={user ? "Write your comment (max 2000 chars)..." : "Login first to review"}
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={(e) => setComment(e.target.value.slice(0, 2000))}
+            maxLength={2000}
             disabled={!user}
             className="flex-1"
           />

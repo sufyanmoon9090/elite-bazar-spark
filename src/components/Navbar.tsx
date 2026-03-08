@@ -30,6 +30,16 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
+  const { data: isAdmin = false } = useQuery({
+    queryKey: ["is_admin", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("is_admin");
+      if (error) return false;
+      return data as boolean;
+    },
+    enabled: !!user,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -38,8 +48,6 @@ const Navbar = () => {
       setSearchQuery("");
     }
   };
-
-  const isAdmin = user?.email === ADMIN_EMAIL;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
