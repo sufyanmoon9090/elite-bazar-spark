@@ -84,9 +84,19 @@ const Contact = () => {
                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
-                    <Button type="submit" className="bg-gradient-gold text-primary-foreground font-semibold gap-2">
-                      <Send size={16} /> Send Message
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button type="submit" className="bg-gradient-gold text-primary-foreground font-semibold gap-2">
+                        <Send size={16} /> Send Message
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="gap-2 border-green-500 text-green-600 hover:bg-green-500/10"
+                        onClick={() => window.open("https://wa.me/923276254377", "_blank")}
+                      >
+                        <MessageCircle size={16} /> Contact on WhatsApp
+                      </Button>
+                    </div>
                   </form>
                 </CardContent>
               </Card>
