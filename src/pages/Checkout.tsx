@@ -181,28 +181,25 @@ const Checkout = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-lg">
-                        <CreditCard size={18} className="text-primary" /> Payment Details
+                        <CreditCard size={18} className="text-primary" /> Payment Method
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div>
-                        <Label>Card Number</Label>
-                        <Input placeholder="4242 4242 4242 4242" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Expiry Date</Label>
-                          <Input placeholder="MM/YY" />
+                      <div className="flex items-center justify-between p-4 rounded-lg border border-primary bg-primary/5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Banknote size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">Cash on Delivery</p>
+                            <p className="text-xs text-muted-foreground">Pay when you receive your order</p>
+                          </div>
                         </div>
-                        <div>
-                          <Label>CVC</Label>
-                          <Input placeholder="123" />
-                        </div>
+                        <Check size={18} className="text-primary" />
                       </div>
-                      <div>
-                        <Label>Cardholder Name</Label>
-                        <Input placeholder="John Doe" />
-                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Cash on Delivery is the only available payment method. Please have the exact amount ready at the time of delivery.
+                      </p>
                     </CardContent>
                   </Card>
                 )}
