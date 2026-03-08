@@ -135,41 +135,72 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Side drawer overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden overflow-hidden bg-card border-t border-border">
-            <div className="flex flex-col p-4 gap-3">
-              {navLinks.map((link) => (
-                <Link key={link.label} to={link.to} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                  {link.label}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Side drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed top-0 right-0 bottom-0 z-50 w-72 bg-card border-l border-border shadow-xl lg:hidden flex flex-col"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <span className="font-display font-bold text-gradient-gold">Menu</span>
+              <button onClick={() => setMobileOpen(false)} className="p-2 text-muted-foreground hover:text-foreground">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <Link key={link.label} to={link.to} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                    {link.label}
+                  </Link>
+                ))}
+                <Link to="/favorites" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                  Favorites ({favorites.length})
                 </Link>
-              ))}
-              <Link to="/favorites" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                Favorites ({favorites.length})
-              </Link>
-              {user && (
-                <>
-                  <Link to="/notifications" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                    Notifications {unreadCount > 0 && `(${unreadCount})`}
-                  </Link>
-                  <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                    My Orders
-                  </Link>
-                  <Link to="/profile" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                    My Profile
-                  </Link>
-                  {isAdmin && (
-                    <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                      Admin Dashboard
+                {user && (
+                  <>
+                    <Link to="/notifications" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                      Notifications {unreadCount > 0 && `(${unreadCount})`}
                     </Link>
-                  )}
-                  <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-sm font-medium text-destructive py-2 text-left">
-                    Sign Out
-                  </button>
-                </>
-              )}
-              {!user && (
-                <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-primary py-2">
+                    <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                      My Orders
+                    </Link>
+                    <Link to="/profile" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                      My Profile
+                    </Link>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
+                        Admin Dashboard
+                      </Link>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="p-4 border-t border-border">
+              {user ? (
+                <button onClick={() => { signOut(); setMobileOpen(false); }} className="w-full text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg px-3 py-3 text-left transition-colors">
+                  Sign Out
+                </button>
+              ) : (
+                <Link to="/auth" onClick={() => setMobileOpen(false)} className="block w-full text-sm font-medium text-primary hover:bg-primary/10 rounded-lg px-3 py-3 text-center transition-colors">
                   Login / Register
                 </Link>
               )}
