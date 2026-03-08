@@ -6,6 +6,7 @@ export interface Notification {
   title: string;
   message: string;
   created_at: string;
+  target_user_id?: string | null;
 }
 
 export function useNotifications() {
@@ -59,12 +60,27 @@ export function useMarkAsRead() {
 export function useSendNotification() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ title, message }: { title: string; message: string }) => {
-      const { error } = await supabase.from("notifications").insert({ title, message });
+    mutationFn: async ({ title, message, target_user_id }: { title: string; message: string; target_user_id?: string | null }) => {
+      const insertData: any = { title, message };
+      if (target_user_id) {
+        insertData.target_user_id = target_user_id;
+      }
+      const { error } = await supabase.from("notifications").insert(insertData);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+export function useAllProfiles() {
+  return useQuery({
+    queryKey: ["all_profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_all_users_for_admin");
+      if (error) throw error;
+      return (data || []) as { id: string; email: string; full_name: string | null }[];
     },
   });
 }
