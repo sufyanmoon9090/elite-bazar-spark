@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import { CreditCard, MapPin, Truck, Check, ArrowLeft } from "lucide-react";
+import { CreditCard, MapPin, Truck, Check, ArrowLeft, Banknote } from "lucide-react";
 
 const steps = ["Address", "Shipping", "Payment", "Confirmation"];
 

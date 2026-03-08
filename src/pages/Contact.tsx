@@ -39,7 +39,7 @@ const Contact = () => {
               <div className="space-y-6">
                 {[
                   { icon: Mail, label: "Email", value: "support@elitebazar.com" },
-                  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
+                  { icon: Phone, label: "WhatsApp", value: "+92 327 625 4377" },
                   { icon: MapPin, label: "Address", value: "123 Commerce St, New York, NY 10001" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-4">
