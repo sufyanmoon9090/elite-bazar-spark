@@ -161,6 +161,11 @@ const Navbar = () => {
               </div>
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="flex flex-col gap-1">
+                  {!user && (
+                    <Link to="/auth" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm font-semibold bg-gradient-gold text-primary-foreground rounded-lg px-3 py-3 mb-2 transition-colors shadow-gold">
+                      <User size={16} /> Login / Register
+                    </Link>
+                  )}
                   {navLinks.map((link) => (
                     <Link key={link.label} to={link.to} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
                       {link.label}
