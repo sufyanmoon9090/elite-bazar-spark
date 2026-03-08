@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import defaultLogo from "@/assets/logo.png";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const footerLinks = {
   "Quick Links": [
@@ -23,17 +24,22 @@ const footerLinks = {
 };
 
 const Footer = () => {
+  const { data: general } = useSiteSettings("general");
+  const siteName = general?.site_name || "Elite Bazar";
+  const logoSrc = general?.logo_url || defaultLogo;
+  const footerText = general?.footer_text || "Your premium destination for quality products and exceptional shopping experiences.";
+
   return (
     <footer className="bg-card border-t border-border pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src={logo} alt="Elite Bazar" className="h-8 w-8 object-contain" />
-              <span className="font-display font-bold text-gradient-gold">Elite Bazar</span>
+              <img src={logoSrc} alt={siteName} className="h-8 w-8 object-contain" onError={(e) => { (e.target as HTMLImageElement).src = defaultLogo; }} />
+              <span className="font-display font-bold text-gradient-gold">{siteName}</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Your premium destination for quality products and exceptional shopping experiences.
+              {footerText}
             </p>
           </div>
           {Object.entries(footerLinks).map(([title, links]) => (
@@ -53,7 +59,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-border pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2026 Elite Bazar. All rights reserved.
+            © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
         </div>
       </div>

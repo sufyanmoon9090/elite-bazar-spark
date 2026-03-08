@@ -6,9 +6,10 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useAuth } from "@/context/AuthContext";
 import { useUnreadCount } from "@/hooks/useNotifications";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import logo from "@/assets/logo.png";
+import defaultLogo from "@/assets/logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 
@@ -26,6 +27,9 @@ const Navbar = () => {
   const { favorites } = useFavorites();
   const { user, signOut } = useAuth();
   const { data: unreadCount = 0 } = useUnreadCount(user?.id);
+  const { data: general } = useSiteSettings("general");
+  const siteName = general?.site_name || "Elite Bazar";
+  const logoSrc = general?.logo_url || defaultLogo;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,8 +58,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Elite Bazar" className="h-10 w-10 object-contain" />
-          <span className="font-display text-xl font-bold text-gradient-gold hidden sm:block">Elite Bazar</span>
+          <img src={logoSrc} alt={siteName} className="h-10 w-10 object-contain" onError={(e) => { (e.target as HTMLImageElement).src = defaultLogo; }} />
+          <span className="font-display text-xl font-bold text-gradient-gold hidden sm:block">{siteName}</span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-8">

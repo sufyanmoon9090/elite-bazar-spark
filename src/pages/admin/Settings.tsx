@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail } from "lucide-react";
+import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon } from "lucide-react";
 import { useAllSiteSettings, useUpdateSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
@@ -15,6 +15,7 @@ export default function Settings() {
   const updateSetting = useUpdateSiteSetting();
 
   // Local state for each section
+  const [general, setGeneral] = useState<any>({});
   const [hero, setHero] = useState<any>({});
   const [catHeading, setCatHeading] = useState<any>({});
   const [deals, setDeals] = useState<any>({});
@@ -25,6 +26,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (allSettings) {
+      setGeneral(allSettings.general || {});
       setHero(allSettings.hero || {});
       setCatHeading(allSettings.categories_heading || {});
       setDeals(allSettings.deals || {});
@@ -38,6 +40,7 @@ export default function Settings() {
   const saveAll = async () => {
     try {
       await Promise.all([
+        updateSetting.mutateAsync({ key: "general", data: general }),
         updateSetting.mutateAsync({ key: "hero", data: hero }),
         updateSetting.mutateAsync({ key: "categories_heading", data: catHeading }),
         updateSetting.mutateAsync({ key: "deals", data: deals }),
@@ -65,6 +68,25 @@ export default function Settings() {
           <Save className="h-4 w-4" /> {updateSetting.isPending ? "Saving..." : "Save All"}
         </Button>
       </div>
+
+      {/* General / Branding */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4" /> General / Branding</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div><Label>Site Name (changes everywhere)</Label><Input value={general.site_name || ""} onChange={(e) => setGeneral({ ...general, site_name: e.target.value })} placeholder="Elite Bazar" /></div>
+          <div>
+            <Label>Logo URL (direct image link, e.g. imgbb)</Label>
+            <Input value={general.logo_url || ""} onChange={(e) => setGeneral({ ...general, logo_url: e.target.value })} placeholder="https://i.ibb.co/your-logo.png" />
+            {general.logo_url && (
+              <div className="mt-2 flex items-center gap-3">
+                <img src={general.logo_url} alt="Logo preview" className="h-12 w-12 object-contain rounded border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <span className="text-xs text-muted-foreground">Preview</span>
+              </div>
+            )}
+          </div>
+          <div><Label>Footer Description</Label><Input value={general.footer_text || ""} onChange={(e) => setGeneral({ ...general, footer_text: e.target.value })} /></div>
+        </CardContent>
+      </Card>
 
       {/* Hero Section */}
       <Card>
