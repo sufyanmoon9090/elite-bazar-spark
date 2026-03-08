@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function Products() {
   const { data: productList = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
