@@ -8,6 +8,7 @@ import {
   Settings,
   ArrowLeft,
   Bell,
+  FolderTree,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, Link } from "react-router-dom";
