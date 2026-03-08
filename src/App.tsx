@@ -19,6 +19,7 @@ import Deals from "./pages/Deals";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
+import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/favorites" element={<Favorites />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/my-orders" element={<MyOrders />} />
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<Dashboard />} />
                   <Route path="products" element={<Products />} />

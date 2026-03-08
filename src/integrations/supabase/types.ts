@@ -64,6 +64,51 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          address: Json
+          created_at: string
+          id: string
+          items: Json
+          order_number: string
+          payment_method: string
+          shipping_cost: number
+          shipping_method: string
+          status: string
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: Json
+          created_at?: string
+          id?: string
+          items?: Json
+          order_number: string
+          payment_method?: string
+          shipping_cost?: number
+          shipping_method?: string
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: Json
+          created_at?: string
+          id?: string
+          items?: Json
+          order_number?: string
+          payment_method?: string
+          shipping_cost?: number
+          shipping_method?: string
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_reviews: {
         Row: {
           comment: string

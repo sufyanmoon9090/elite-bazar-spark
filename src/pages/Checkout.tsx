@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { useCreateOrder } from "@/hooks/useOrders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,21 +14,15 @@ import { toast } from "sonner";
 import { CreditCard, MapPin, Truck, Check, ArrowLeft, Banknote } from "lucide-react";
 
 const steps = ["Address", "Shipping", "Payment", "Confirmation"];
-
 const pakistanCities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta", "Sialkot", "Gujranwala", "Hyderabad", "Bahawalpur"];
 
 const Checkout = () => {
   const { items, totalPrice, totalItems, clearCart } = useCart();
+  const { user } = useAuth();
+  const createOrder = useCreateOrder();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [address, setAddress] = useState({
-    name: "",
-    street: "",
-    city: "",
-    province: "",
-    zip: "",
-    phone: "",
-  });
+  const [address, setAddress] = useState({ name: "", street: "", city: "", province: "", zip: "", phone: "" });
   const [shipping, setShipping] = useState("standard");
   const shippingCost = shipping === "express" ? 300 : shipping === "overnight" ? 500 : 0;
 
@@ -43,10 +39,31 @@ const Checkout = () => {
     );
   }
 
-  const handlePlaceOrder = () => {
-    toast.success("Order placed successfully! 🎉 Cash on Delivery");
-    clearCart();
-    navigate("/");
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      toast.error("Please login to place an order");
+      navigate("/auth");
+      return;
+    }
+
+    const orderNumber = `EB-${Date.now().toString(36).toUpperCase()}`;
+
+    try {
+      await createOrder.mutateAsync({
+        user_id: user.id,
+        order_number: orderNumber,
+        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
+        total: totalPrice,
+        shipping_cost: shippingCost,
+        shipping_method: shipping,
+        address,
+      });
+      toast.success(`Order ${orderNumber} placed successfully! 🎉`);
+      clearCart();
+      navigate("/my-orders");
+    } catch {
+      toast.error("Order place karne mein error aya. Dobara try karein.");
+    }
   };
 
   const nextStep = () => {
@@ -83,9 +100,7 @@ const Checkout = () => {
               <div className="lg:col-span-2">
                 {step === 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg"><MapPin size={18} className="text-primary" /> Delivery Address (Pakistan)</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><MapPin size={18} className="text-primary" /> Delivery Address (Pakistan)</CardTitle></CardHeader>
                     <CardContent className="space-y-4">
                       <div><Label>Full Name *</Label><Input value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} placeholder="Muhammad Ali" /></div>
                       <div><Label>Street Address / Area *</Label><Input value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} placeholder="House #12, Street 5, Gulberg III" /></div>
@@ -124,15 +139,12 @@ const Checkout = () => {
                       {[
                         { id: "standard", label: "Standard Delivery", desc: "5-7 working days", price: "Free" },
                         { id: "express", label: "Express Delivery", desc: "2-3 working days", price: "Rs. 300" },
-                        { id: "overnight", label: "Overnight Delivery", desc: "Next working day (major cities only)", price: "Rs. 500" },
+                        { id: "overnight", label: "Overnight Delivery", desc: "Next working day (major cities)", price: "Rs. 500" },
                       ].map((opt) => (
                         <label key={opt.id} className={`flex items-center justify-between p-4 rounded-lg border cursor-pointer transition-all ${shipping === opt.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/30"}`}>
                           <div className="flex items-center gap-3">
                             <input type="radio" name="shipping" value={opt.id} checked={shipping === opt.id} onChange={() => setShipping(opt.id)} className="accent-primary" />
-                            <div>
-                              <p className="font-medium text-sm">{opt.label}</p>
-                              <p className="text-xs text-muted-foreground">{opt.desc}</p>
-                            </div>
+                            <div><p className="font-medium text-sm">{opt.label}</p><p className="text-xs text-muted-foreground">{opt.desc}</p></div>
                           </div>
                           <span className="text-sm font-semibold text-primary">{opt.price}</span>
                         </label>
@@ -148,14 +160,10 @@ const Checkout = () => {
                       <div className="flex items-center justify-between p-4 rounded-lg border border-primary bg-primary/5">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"><Banknote size={20} className="text-primary" /></div>
-                          <div>
-                            <p className="font-medium text-sm">Cash on Delivery (COD)</p>
-                            <p className="text-xs text-muted-foreground">Order receive hone par payment karein</p>
-                          </div>
+                          <div><p className="font-medium text-sm">Cash on Delivery (COD)</p><p className="text-xs text-muted-foreground">Order receive hone par payment karein</p></div>
                         </div>
                         <Check size={18} className="text-primary" />
                       </div>
-                      <p className="text-xs text-muted-foreground">Cash on Delivery sirf available payment method hai. Delivery ke waqt exact amount ready rakhein.</p>
                     </CardContent>
                   </Card>
                 )}
@@ -191,7 +199,9 @@ const Checkout = () => {
                   {step < 3 ? (
                     <Button onClick={nextStep} className="bg-gradient-gold text-primary-foreground font-semibold">Continue</Button>
                   ) : (
-                    <Button onClick={handlePlaceOrder} className="bg-gradient-gold text-primary-foreground font-semibold shadow-gold">Place Order (COD)</Button>
+                    <Button onClick={handlePlaceOrder} disabled={createOrder.isPending} className="bg-gradient-gold text-primary-foreground font-semibold shadow-gold">
+                      {createOrder.isPending ? "Placing Order..." : "Place Order (COD)"}
+                    </Button>
                   )}
                 </div>
               </div>
