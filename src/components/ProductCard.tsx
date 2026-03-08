@@ -37,11 +37,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
       >
         <div className="relative aspect-square overflow-hidden">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           {product.badge && (
             <span className="absolute top-3 left-3 bg-gradient-gold text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
               {product.badge}
@@ -52,27 +48,14 @@ const ProductCard = ({ product }: { product: Product }) => {
               -{discount}%
             </span>
           )}
-          {/* Hover actions */}
           <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-            <button
-              onClick={handleAddToCart}
-              className="p-2.5 bg-primary text-primary-foreground rounded-full hover:scale-110 transition-transform"
-            >
+            <button onClick={handleAddToCart} className="p-2.5 bg-primary text-primary-foreground rounded-full hover:scale-110 transition-transform">
               <ShoppingCart size={18} />
             </button>
-            <button
-              onClick={handleFavorite}
-              className={`p-2.5 rounded-full border border-border hover:scale-110 transition-transform ${
-                isFavorite(product.id) ? "bg-red-500 text-white" : "bg-card text-foreground"
-              }`}
-            >
+            <button onClick={handleFavorite} className={`p-2.5 rounded-full border border-border hover:scale-110 transition-transform ${isFavorite(product.id) ? "bg-red-500 text-white" : "bg-card text-foreground"}`}>
               <Heart size={18} className={isFavorite(product.id) ? "fill-current" : ""} />
             </button>
-            <Link
-              to={`/product/${product.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="p-2.5 bg-card text-foreground rounded-full border border-border hover:scale-110 transition-transform"
-            >
+            <Link to={`/product/${product.id}`} onClick={(e) => e.stopPropagation()} className="p-2.5 bg-card text-foreground rounded-full border border-border hover:scale-110 transition-transform">
               <Eye size={18} />
             </Link>
           </div>
@@ -83,18 +66,14 @@ const ProductCard = ({ product }: { product: Product }) => {
           <h3 className="font-display font-semibold text-sm mb-2 line-clamp-1">{product.name}</h3>
           <div className="flex items-center gap-1 mb-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={12}
-                className={i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-border"}
-              />
+              <Star key={i} size={12} className={i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-border"} />
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg text-gradient-gold">${product.price}</span>
+            <span className="font-display font-bold text-lg text-gradient-gold">Rs. {product.price.toLocaleString()}</span>
             {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">${product.originalPrice}</span>
+              <span className="text-sm text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>
             )}
           </div>
         </div>
