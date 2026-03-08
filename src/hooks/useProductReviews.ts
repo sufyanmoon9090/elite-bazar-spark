@@ -21,7 +21,7 @@ export function useProductReviews(productId: string) {
         .eq("product_id", productId)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data || []) as ProductReview[];
+      return (data || []) as unknown as ProductReview[];
     },
   });
 }
