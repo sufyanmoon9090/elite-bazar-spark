@@ -75,8 +75,8 @@ const ProductDetails = () => {
               </div>
 
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl font-display font-bold text-gradient-gold">${product.price.toFixed(2)}</span>
-                {product.originalPrice && <span className="text-lg text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>}
+                <span className="text-3xl font-display font-bold text-gradient-gold">Rs. {product.price.toLocaleString()}</span>
+                {product.originalPrice && <span className="text-lg text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>}
                 {discount > 0 && <Badge variant="destructive">Save {discount}%</Badge>}
               </div>
 
@@ -101,10 +101,10 @@ const ProductDetails = () => {
 
               <div className="grid grid-cols-3 gap-4 border-t border-border pt-6">
                 <div className="flex flex-col items-center text-center gap-2">
-                  <Truck size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Free Shipping</span>
+                  <Truck size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Free Delivery</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
-                  <Shield size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Secure Payment</span>
+                  <Shield size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Cash on Delivery</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
                   <RotateCcw size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Easy Returns</span>
@@ -116,7 +116,7 @@ const ProductDetails = () => {
           <div className="bg-card border border-border rounded-xl p-6 mb-16">
             <h2 className="text-xl font-display font-bold mb-4">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Warranty", "1 Year"]].map(([label, value]) => (
+              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Warranty", "1 Year"], ["Delivery", "All Pakistan"], ["Payment", "Cash on Delivery"]].map(([label, value]) => (
                 <div key={label} className="flex items-center gap-2 py-2 border-b border-border/50">
                   <Check size={14} className="text-primary shrink-0" />
                   <span className="text-sm text-muted-foreground">{label}:</span>
@@ -126,7 +126,6 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* Reviews Section */}
           <ProductReviews productId={product.id} />
 
           {related.length > 0 && (
