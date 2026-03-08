@@ -142,6 +142,13 @@ export default function Settings() {
             <div><Label>Highlight</Label><Input value={deals.highlight || ""} onChange={(e) => setDeals({ ...deals, highlight: e.target.value })} /></div>
           </div>
           <div><Label>Subtitle</Label><Input value={deals.subtitle || ""} onChange={(e) => setDeals({ ...deals, subtitle: e.target.value })} /></div>
+          <Separator />
+          <Label className="text-xs text-muted-foreground">Sale Timer (Starting Time)</Label>
+          <div className="grid grid-cols-3 gap-3">
+            <div><Label>Hours</Label><Input type="number" min={0} max={99} value={deals.timer_hours ?? 12} onChange={(e) => setDeals({ ...deals, timer_hours: parseInt(e.target.value) || 0 })} /></div>
+            <div><Label>Minutes</Label><Input type="number" min={0} max={59} value={deals.timer_minutes ?? 34} onChange={(e) => setDeals({ ...deals, timer_minutes: parseInt(e.target.value) || 0 })} /></div>
+            <div><Label>Seconds</Label><Input type="number" min={0} max={59} value={deals.timer_seconds ?? 56} onChange={(e) => setDeals({ ...deals, timer_seconds: parseInt(e.target.value) || 0 })} /></div>
+          </div>
         </CardContent>
       </Card>
 
