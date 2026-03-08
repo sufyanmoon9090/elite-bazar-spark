@@ -22,6 +22,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
 import Customers from "./pages/admin/Customers";
+import Coupons from "./pages/admin/Coupons";
+import Reports from "./pages/admin/Reports";
+import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
