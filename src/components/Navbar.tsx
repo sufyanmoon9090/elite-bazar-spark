@@ -10,6 +10,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import defaultLogo from "@/assets/logo.png";
+import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 
@@ -28,8 +29,9 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const { data: unreadCount = 0 } = useUnreadCount(user?.id);
   const { data: general } = useSiteSettings("general");
+  const { resolvedTheme } = useTheme();
   const siteName = general?.site_name || "Elite Bazar";
-  const logoSrc = general?.logo_url || defaultLogo;
+  const logoSrc = resolvedTheme === "dark" && general?.dark_logo_url ? general.dark_logo_url : (general?.logo_url || defaultLogo);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

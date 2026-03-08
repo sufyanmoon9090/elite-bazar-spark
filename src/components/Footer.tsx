@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import defaultLogo from "@/assets/logo.png";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useTheme } from "next-themes";
 
 const footerLinks = {
   "Quick Links": [
@@ -25,8 +26,9 @@ const footerLinks = {
 
 const Footer = () => {
   const { data: general } = useSiteSettings("general");
+  const { resolvedTheme } = useTheme();
   const siteName = general?.site_name || "Elite Bazar";
-  const logoSrc = general?.logo_url || defaultLogo;
+  const logoSrc = resolvedTheme === "dark" && general?.dark_logo_url ? general.dark_logo_url : (general?.logo_url || defaultLogo);
   const footerText = general?.footer_text || "Your premium destination for quality products and exceptional shopping experiences.";
 
   return (

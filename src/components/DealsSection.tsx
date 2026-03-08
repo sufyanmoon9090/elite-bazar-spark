@@ -3,12 +3,16 @@ import { motion } from "framer-motion";
 import { Zap, Clock } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const defaults = { badge: "Flash Sale", title: "Up to", highlight: "70% Off", subtitle: "Premium electronics & gadgets. Limited time only!" };
+const defaults = { badge: "Flash Sale", title: "Up to", highlight: "70% Off", subtitle: "Premium electronics & gadgets. Limited time only!", timer_hours: 12, timer_minutes: 34, timer_seconds: 56 };
 
 const DealsSection = () => {
   const { data: settings } = useSiteSettings("deals");
   const s = { ...defaults, ...settings };
-  const [timeLeft, setTimeLeft] = useState({ hours: 12, minutes: 34, seconds: 56 });
+  const [timeLeft, setTimeLeft] = useState({ hours: s.timer_hours, minutes: s.timer_minutes, seconds: s.timer_seconds });
+
+  useEffect(() => {
+    setTimeLeft({ hours: s.timer_hours, minutes: s.timer_minutes, seconds: s.timer_seconds });
+  }, [s.timer_hours, s.timer_minutes, s.timer_seconds]);
 
   useEffect(() => {
     const timer = setInterval(() => {
