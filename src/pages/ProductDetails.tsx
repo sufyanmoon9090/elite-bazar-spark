@@ -111,6 +111,7 @@ const ProductDetails = () => {
                     src={allImages[selectedImageIndex]}
                     alt={`${product.name} - Image ${selectedImageIndex + 1}`}
                     className="w-full aspect-square object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -147,7 +148,7 @@ const ProductDetails = () => {
                       onClick={() => setSelectedImageIndex(idx)}
                       className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${idx === selectedImageIndex ? "border-primary shadow-gold" : "border-border opacity-60 hover:opacity-100"}`}
                     >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                     </button>
                   ))}
                 </div>
