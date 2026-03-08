@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Zap, Clock } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+
+const defaults = { badge: "Flash Sale", title: "Up to", highlight: "70% Off", subtitle: "Premium electronics & gadgets. Limited time only!" };
 
 const DealsSection = () => {
+  const { data: settings } = useSiteSettings("deals");
+  const s = { ...defaults, ...settings };
   const [timeLeft, setTimeLeft] = useState({ hours: 12, minutes: 34, seconds: 56 });
 
   useEffect(() => {
@@ -30,14 +35,13 @@ const DealsSection = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Zap className="text-primary" size={20} />
-                <span className="text-primary font-semibold text-sm uppercase tracking-wider">Flash Sale</span>
+                <span className="text-primary font-semibold text-sm uppercase tracking-wider">{s.badge}</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-display font-bold mb-2">
-                Up to <span className="text-gradient-gold">70% Off</span>
+                {s.title} <span className="text-gradient-gold">{s.highlight}</span>
               </h2>
-              <p className="text-muted-foreground">Premium electronics & gadgets. Limited time only!</p>
+              <p className="text-muted-foreground">{s.subtitle}</p>
             </div>
-
             <div className="flex items-center gap-2">
               <Clock className="text-primary mr-2" size={20} />
               {[
