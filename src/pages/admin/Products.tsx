@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, ProductVariant } from "@/hooks/useProductVariants";
+import { useCategories } from "@/hooks/useCategories";
 import { Product } from "@/data/mockData";
 import { Plus, Search, Pencil, Trash2, X, ImagePlus, Layers } from "lucide-react";
 import {
@@ -17,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function Products() {
   const { data: productList = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
@@ -195,7 +197,19 @@ export default function Products() {
               <div className="space-y-4 pt-2">
                 <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product name" /></div>
                 <div><Label>Price (Rs.)</Label><Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0" /></div>
-                <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="electronics" /></div>
+                <div>
+                  <Label>Category</Label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                  >
+                    <option value="">Select category</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.slug}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
                 <div><Label>Main Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
 
                 <div className="space-y-2">

@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { categories } from "@/data/mockData";
+import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
@@ -20,6 +20,7 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState("default");
 
   const { data: products = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
 
   const filtered = useMemo(() => {
     let result = products;
@@ -55,7 +56,7 @@ const Shop = () => {
             <div className="flex gap-2 flex-wrap">
               <Button variant={selectedCategory === "all" ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory("all")} className={selectedCategory === "all" ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}>All</Button>
               {categories.map((cat) => (
-                <Button key={cat.id} variant={selectedCategory === cat.id ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory(cat.id)} className={selectedCategory === cat.id ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}>{cat.name}</Button>
+                <Button key={cat.id} variant={selectedCategory === cat.slug ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory(cat.slug)} className={selectedCategory === cat.slug ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}>{cat.name}</Button>
               ))}
             </div>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground">

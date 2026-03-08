@@ -34,6 +34,7 @@ import Coupons from "./pages/admin/Coupons";
 import AdminNotifications from "./pages/admin/Notifications";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+import AdminCategories from "./pages/admin/Categories";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const AnimatedRoutes = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
+            <Route path="categories" element={<AdminCategories />} />
             <Route path="orders" element={<Orders />} />
             <Route path="customers" element={<Customers />} />
             <Route path="coupons" element={<Coupons />} />
