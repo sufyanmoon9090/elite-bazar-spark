@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Heart, Menu, X, Search, User, LogOut, Bell, UserCircle } from "lucide-react";
+import { ShoppingCart, Heart, Menu, X, Search, User, LogOut, Bell, UserCircle, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useAuth } from "@/context/AuthContext";
@@ -69,7 +69,6 @@ const Navbar = () => {
             </button>
           )}
 
-          {/* Notifications */}
           {user && (
             <Link to="/notifications" className="p-2 text-muted-foreground hover:text-primary transition-colors relative">
               <Bell size={20} />
@@ -101,6 +100,9 @@ const Navbar = () => {
 
           {user ? (
             <div className="hidden sm:flex items-center gap-1">
+              <Link to="/my-orders" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="My Orders">
+                <Package size={16} />
+              </Link>
               <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Profile">
                 <UserCircle size={18} />
               </Link>
@@ -138,12 +140,13 @@ const Navbar = () => {
                 Favorites ({favorites.length})
               </Link>
               {user && (
-                <Link to="/notifications" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
-                  Notifications {unreadCount > 0 && `(${unreadCount})`}
-                </Link>
-              )}
-              {user ? (
                 <>
+                  <Link to="/notifications" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
+                    Notifications {unreadCount > 0 && `(${unreadCount})`}
+                  </Link>
+                  <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
+                    My Orders
+                  </Link>
                   <Link to="/profile" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary py-2">
                     My Profile
                   </Link>
@@ -156,7 +159,8 @@ const Navbar = () => {
                     Sign Out
                   </button>
                 </>
-              ) : (
+              )}
+              {!user && (
                 <Link to="/auth" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-primary py-2">
                   Login / Register
                 </Link>

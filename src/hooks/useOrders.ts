@@ -1,0 +1,95 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  user_id: string;
+  items: OrderItem[];
+  total: number;
+  shipping_cost: number;
+  shipping_method: string;
+  address: any;
+  status: string;
+  payment_method: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export function useMyOrders(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["my_orders", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", userId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []) as Order[];
+    },
+  });
+}
+
+export function useAllOrders() {
+  return useQuery({
+    queryKey: ["all_orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []) as Order[];
+    },
+  });
+}
+
+export function useCreateOrder() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (order: {
+      user_id: string;
+      order_number: string;
+      items: OrderItem[];
+      total: number;
+      shipping_cost: number;
+      shipping_method: string;
+      address: any;
+    }) => {
+      const { data, error } = await supabase.from("orders").insert(order).select().single();
+      if (error) throw error;
+      return data as Order;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my_orders"] });
+      queryClient.invalidateQueries({ queryKey: ["all_orders"] });
+    },
+  });
+}
+
+export function useUpdateOrderStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
+      const { error } = await supabase
+        .from("orders")
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq("id", orderId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all_orders"] });
+      queryClient.invalidateQueries({ queryKey: ["my_orders"] });
+    },
+  });
+}
