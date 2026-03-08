@@ -15,6 +15,7 @@ export default function Settings() {
   const updateSetting = useUpdateSiteSetting();
 
   // Local state for each section
+  const [general, setGeneral] = useState<any>({});
   const [hero, setHero] = useState<any>({});
   const [catHeading, setCatHeading] = useState<any>({});
   const [deals, setDeals] = useState<any>({});
