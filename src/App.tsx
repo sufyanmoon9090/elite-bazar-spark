@@ -17,6 +17,7 @@ import Blog from "./pages/Blog";
 import Deals from "./pages/Deals";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
+import WhatsAppButton from "./components/WhatsAppButton";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
