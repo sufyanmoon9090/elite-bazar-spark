@@ -3,10 +3,8 @@ import {
   DollarSign,
   ShoppingCart,
   Users,
-  TrendingUp,
   Package,
-  ArrowUpRight,
-  ArrowDownRight,
+  TrendingUp,
 } from "lucide-react";
 import {
   BarChart,
@@ -20,39 +18,9 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { revenueData, categoryDistribution, orders } from "@/data/adminMockData";
-import { Badge } from "@/components/ui/badge";
-
-const stats = [
-  {
-    title: "Total Revenue",
-    value: "$312,900",
-    change: "+12.5%",
-    up: true,
-    icon: DollarSign,
-  },
-  {
-    title: "Total Orders",
-    value: "2,044",
-    change: "+8.2%",
-    up: true,
-    icon: ShoppingCart,
-  },
-  {
-    title: "Active Users",
-    value: "1,429",
-    change: "+18.7%",
-    up: true,
-    icon: Users,
-  },
-  {
-    title: "Conversion Rate",
-    value: "3.24%",
-    change: "-0.4%",
-    up: false,
-    icon: TrendingUp,
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format, subMonths, startOfMonth } from "date-fns";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-500/20 text-yellow-400",
@@ -62,14 +30,100 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-destructive/20 text-destructive",
 };
 
+const catColors = [
+  "hsl(43, 74%, 49%)",
+  "hsl(43, 80%, 65%)",
+  "hsl(220, 15%, 40%)",
+  "hsl(220, 15%, 55%)",
+  "hsl(220, 10%, 35%)",
+  "hsl(340, 60%, 50%)",
+  "hsl(160, 50%, 40%)",
+];
+
 export default function Dashboard() {
+  // Fetch orders
+  const { data: orders = [] } = useQuery({
+    queryKey: ["admin_orders_dashboard"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Fetch users count
+  const { data: usersData = [] } = useQuery({
+    queryKey: ["admin_all_users"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_all_users_for_admin");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Fetch products for category distribution
+  const { data: products = [] } = useQuery({
+    queryKey: ["admin_products_dashboard"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("products").select("category");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Calculate stats
+  const totalRevenue = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
+  const totalOrders = orders.length;
+  const totalUsers = usersData.length;
+  const totalProducts = products.length;
+
+  const stats = [
+    { title: "Total Revenue", value: `Rs ${totalRevenue.toLocaleString()}`, icon: DollarSign },
+    { title: "Total Orders", value: totalOrders.toLocaleString(), icon: ShoppingCart },
+    { title: "Total Users", value: totalUsers.toLocaleString(), icon: Users },
+    { title: "Total Products", value: totalProducts.toLocaleString(), icon: TrendingUp },
+  ];
+
+  // Revenue by month (last 7 months)
+  const revenueData = Array.from({ length: 7 }, (_, i) => {
+    const date = subMonths(new Date(), 6 - i);
+    const monthStart = startOfMonth(date);
+    const monthLabel = format(date, "MMM");
+    const monthOrders = orders.filter((o: any) => {
+      const d = new Date(o.created_at);
+      return d.getMonth() === monthStart.getMonth() && d.getFullYear() === monthStart.getFullYear();
+    });
+    const revenue = monthOrders.reduce((s: number, o: any) => s + Number(o.total || 0), 0);
+    return { month: monthLabel, revenue };
+  });
+
+  // Category distribution from products
+  const catMap: Record<string, number> = {};
+  products.forEach((p: any) => {
+    const cat = p.category || "Other";
+    catMap[cat] = (catMap[cat] || 0) + 1;
+  });
+  const totalCatCount = products.length || 1;
+  const categoryDistribution = Object.entries(catMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 7)
+    .map(([name, count], i) => ({
+      name,
+      value: Math.round((count / totalCatCount) * 100),
+      fill: catColors[i % catColors.length],
+    }));
+
+  // Recent 5 orders
+  const recentOrders = orders.slice(0, 5);
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-display font-bold">Dashboard</h2>
-        <p className="text-muted-foreground text-sm">
-          Overview of your store performance
-        </p>
+        <p className="text-muted-foreground text-sm">Overview of your store performance</p>
       </div>
 
       {/* Stats Grid */}
@@ -81,18 +135,6 @@ export default function Dashboard() {
                 <div className="p-2 rounded-lg bg-primary/10">
                   <stat.icon className="h-5 w-5 text-primary" />
                 </div>
-                <span
-                  className={`flex items-center text-xs font-medium ${
-                    stat.up ? "text-green-400" : "text-destructive"
-                  }`}
-                >
-                  {stat.up ? (
-                    <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3 mr-0.5" />
-                  )}
-                  {stat.change}
-                </span>
               </div>
               <div className="mt-3">
                 <p className="text-2xl font-bold">{stat.value}</p>
@@ -112,17 +154,17 @@ export default function Dashboard() {
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,18%)" />
-                <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={12} />
-                <YAxis stroke="hsl(220,10%,55%)" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    background: "hsl(220,18%,10%)",
-                    border: "1px solid hsl(220,15%,18%)",
+                    background: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
                     borderRadius: "8px",
-                    color: "hsl(40,20%,95%)",
+                    color: "hsl(var(--foreground))",
                   }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
+                  formatter={(value: number) => [`Rs ${value.toLocaleString()}`, "Revenue"]}
                 />
                 <Bar dataKey="revenue" fill="hsl(43,74%,49%)" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -132,49 +174,52 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Sales by Category</CardTitle>
+            <CardTitle className="text-base">Products by Category</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={categoryDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  dataKey="value"
-                >
-                  {categoryDistribution.map((entry, index) => (
-                    <Cell key={index} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    background: "hsl(220,18%,10%)",
-                    border: "1px solid hsl(220,15%,18%)",
-                    borderRadius: "8px",
-                    color: "hsl(40,20%,95%)",
-                  }}
-                  formatter={(value: number) => [`${value}%`, "Share"]}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="space-y-2 mt-2">
-              {categoryDistribution.map((cat) => (
-                <div key={cat.name} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ background: cat.fill }}
+            {categoryDistribution.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={categoryDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {categoryDistribution.map((entry, index) => (
+                        <Cell key={index} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        color: "hsl(var(--foreground))",
+                      }}
+                      formatter={(value: number) => [`${value}%`, "Share"]}
                     />
-                    <span className="text-muted-foreground">{cat.name}</span>
-                  </div>
-                  <span className="font-medium">{cat.value}%</span>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="space-y-2 mt-2">
+                  {categoryDistribution.map((cat) => (
+                    <div key={cat.name} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: cat.fill }} />
+                        <span className="text-muted-foreground">{cat.name}</span>
+                      </div>
+                      <span className="font-medium">{cat.value}%</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <p className="text-muted-foreground text-sm text-center py-8">No products yet</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -188,34 +233,36 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 text-muted-foreground font-medium">Order</th>
-                  <th className="text-left py-3 px-2 text-muted-foreground font-medium">Customer</th>
-                  <th className="text-left py-3 px-2 text-muted-foreground font-medium">Date</th>
-                  <th className="text-left py-3 px-2 text-muted-foreground font-medium">Total</th>
-                  <th className="text-left py-3 px-2 text-muted-foreground font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.slice(0, 5).map((order) => (
-                  <tr key={order.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="py-3 px-2 font-medium">{order.id}</td>
-                    <td className="py-3 px-2 text-muted-foreground">{order.customer}</td>
-                    <td className="py-3 px-2 text-muted-foreground">{order.date}</td>
-                    <td className="py-3 px-2">${order.total.toFixed(2)}</td>
-                    <td className="py-3 px-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
-                        {order.status}
-                      </span>
-                    </td>
+          {recentOrders.length === 0 ? (
+            <p className="text-muted-foreground text-sm text-center py-8">No orders yet</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Order</th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Date</th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Total</th>
+                    <th className="text-left py-3 px-2 text-muted-foreground font-medium">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {recentOrders.map((order: any) => (
+                    <tr key={order.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                      <td className="py-3 px-2 font-medium">{order.order_number}</td>
+                      <td className="py-3 px-2 text-muted-foreground">{format(new Date(order.created_at), "MMM dd, yyyy")}</td>
+                      <td className="py-3 px-2">Rs {Number(order.total).toLocaleString()}</td>
+                      <td className="py-3 px-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[order.status] || ""}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
