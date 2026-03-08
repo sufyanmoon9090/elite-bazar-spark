@@ -97,8 +97,7 @@ export default function BlogPosts() {
             <div><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Guide title" /></div>
             <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Tech, Fashion, Home..." /></div>
             <div><Label>Date</Label><Input value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} placeholder="Mar 5, 2026" /></div>
-            <div><Label>Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
-            {form.image && <img src={form.image} alt="Preview" className="w-full aspect-video object-cover rounded-lg border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+            <ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} folder="blog" label="Cover Image" />
             <div><Label>Excerpt</Label><Textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Brief description..." rows={3} /></div>
             <div><Label>Sort Order</Label><Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} /></div>
             <Button onClick={handleSave} className="w-full" disabled={createPost.isPending || updatePost.isPending}>

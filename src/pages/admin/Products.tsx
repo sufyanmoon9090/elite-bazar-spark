@@ -303,7 +303,7 @@ export default function Products() {
                   <div><Label className="text-xs">Price (Rs.)</Label><Input type="number" value={variantForm.price} onChange={(e) => setVariantForm({ ...variantForm, price: e.target.value })} placeholder="0" /></div>
                   <div><Label className="text-xs">Original Price</Label><Input type="number" value={variantForm.original_price} onChange={(e) => setVariantForm({ ...variantForm, original_price: e.target.value })} placeholder="Optional" /></div>
                 </div>
-                <div><Label className="text-xs">Image URL</Label><Input value={variantForm.image} onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })} placeholder="https://..." /></div>
+                <ImageUpload value={variantForm.image} onChange={(url) => setVariantForm({ ...variantForm, image: url })} folder="variants" label="Variant Image" />
                 <div><Label className="text-xs">Description</Label><Textarea value={variantForm.description} onChange={(e) => setVariantForm({ ...variantForm, description: e.target.value })} placeholder="Variant specific description" rows={2} /></div>
                 <div className="flex gap-2">
                   <Button onClick={handleSaveVariant} className="flex-1" disabled={addVariant.isPending || updateVariant.isPending}>
