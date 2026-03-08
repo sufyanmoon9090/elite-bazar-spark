@@ -19,6 +19,8 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState("default");
 
+  const { products } = useProductStore();
+
   const filtered = useMemo(() => {
     let result = products;
     if (selectedCategory !== "all") {
