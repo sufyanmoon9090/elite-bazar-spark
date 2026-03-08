@@ -4,24 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
+import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, ProductVariant } from "@/hooks/useProductVariants";
 import { Product } from "@/data/mockData";
-import { Plus, Search, Pencil, Trash2, X, ImagePlus } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, X, ImagePlus, Layers } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Products() {
   const { data: productList = [], isLoading } = useProducts();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
+  const addVariant = useAddVariant();
+  const updateVariant = useUpdateVariant();
+  const deleteVariant = useDeleteVariant();
+
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const { toast } = useToast();
+
+  // Variant management
+  const [variantDialog, setVariantDialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const { data: variants = [] } = useProductVariants(selectedProductId ?? undefined);
+  const [variantForm, setVariantForm] = useState({ variant_name: "", price: "", original_price: "", image: "", description: "" });
+  const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
 
   const [form, setForm] = useState({ name: "", price: "", category: "", image: "", description: "", images: [] as string[] });
   const [newImageUrl, setNewImageUrl] = useState("");
@@ -64,7 +77,7 @@ export default function Products() {
   const handleSave = () => {
     if (!form.name || !form.price) return;
     const mainImage = form.image || form.images[0] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80";
-    
+
     if (editingProduct) {
       updateProduct.mutate({
         id: editingProduct.id,
@@ -105,6 +118,60 @@ export default function Products() {
     });
   };
 
+  // Variant handlers
+  const openVariants = (productId: string) => {
+    setSelectedProductId(productId);
+    setEditingVariant(null);
+    setVariantForm({ variant_name: "", price: "", original_price: "", image: "", description: "" });
+    setVariantDialog(true);
+  };
+
+  const openEditVariant = (v: ProductVariant) => {
+    setEditingVariant(v);
+    setVariantForm({
+      variant_name: v.variant_name,
+      price: v.price.toString(),
+      original_price: v.original_price?.toString() || "",
+      image: v.image,
+      description: v.description || "",
+    });
+  };
+
+  const resetVariantForm = () => {
+    setEditingVariant(null);
+    setVariantForm({ variant_name: "", price: "", original_price: "", image: "", description: "" });
+  };
+
+  const handleSaveVariant = () => {
+    if (!variantForm.variant_name || !variantForm.price || !selectedProductId) return;
+    const payload = {
+      variant_name: variantForm.variant_name,
+      price: parseFloat(variantForm.price),
+      original_price: variantForm.original_price ? parseFloat(variantForm.original_price) : null,
+      image: variantForm.image,
+      description: variantForm.description || null,
+    };
+
+    if (editingVariant) {
+      updateVariant.mutate({ id: editingVariant.id, data: { ...payload, product_id: selectedProductId } }, {
+        onSuccess: () => { toast({ title: "Variant updated" }); resetVariantForm(); },
+        onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+      });
+    } else {
+      addVariant.mutate({ ...payload, product_id: selectedProductId }, {
+        onSuccess: () => { toast({ title: "Variant added" }); resetVariantForm(); },
+        onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+      });
+    }
+  };
+
+  const handleDeleteVariant = (id: string) => {
+    if (!selectedProductId) return;
+    deleteVariant.mutate({ id, productId: selectedProductId }, {
+      onSuccess: () => toast({ title: "Variant deleted", variant: "destructive" }),
+    });
+  };
+
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading products...</div>;
   }
@@ -130,7 +197,7 @@ export default function Products() {
                 <div><Label>Price (Rs.)</Label><Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0" /></div>
                 <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="electronics" /></div>
                 <div><Label>Main Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
-                
+
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2"><ImagePlus className="h-4 w-4" /> Product Images</Label>
                   <div className="flex gap-2">
@@ -153,17 +220,13 @@ export default function Products() {
                           >
                             <X className="h-3 w-3" />
                           </button>
-                          <span className="absolute bottom-1 left-1 text-[10px] bg-card/80 backdrop-blur-sm px-1.5 py-0.5 rounded text-foreground">
-                            {idx + 1}
-                          </span>
                         </div>
                       ))}
                     </div>
                   )}
-                  <p className="text-xs text-muted-foreground">Add multiple image URLs for a product gallery.</p>
                 </div>
 
-                <div><Label>Description</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
+                <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
                 <Button onClick={handleSave} className="w-full" disabled={addProduct.isPending || updateProduct.isPending}>
                   {editingProduct ? "Update Product" : "Add Product"}
                 </Button>
@@ -196,6 +259,7 @@ export default function Products() {
                 </div>
                 <div className="flex gap-1 mt-2">
                   <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(product)}><Pencil className="h-3.5 w-3.5" /></Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openVariants(product.id)} title="Manage Variants"><Layers className="h-3.5 w-3.5" /></Button>
                   <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
@@ -203,6 +267,54 @@ export default function Products() {
           </Card>
         ))}
       </div>
+
+      {/* Variant Management Dialog */}
+      <Dialog open={variantDialog} onOpenChange={setVariantDialog}>
+        <DialogContent className="max-w-lg max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Manage Variants</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh] pr-4">
+            <div className="space-y-4">
+              {/* Existing variants */}
+              {variants.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground">Existing Variants ({variants.length})</Label>
+                  {variants.map((v) => (
+                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
+                      {v.image && <img src={v.image} alt={v.variant_name} className="w-12 h-12 rounded object-cover" />}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">{v.variant_name}</p>
+                        <p className="text-xs text-primary">Rs. {v.price.toLocaleString()}{v.original_price ? ` (was Rs. ${v.original_price.toLocaleString()})` : ""}</p>
+                      </div>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => openEditVariant(v)}><Pencil className="h-3 w-3" /></Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0 text-destructive" onClick={() => handleDeleteVariant(v.id)}><Trash2 className="h-3 w-3" /></Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add/Edit variant form */}
+              <div className="border-t border-border pt-4 space-y-3">
+                <Label className="font-semibold">{editingVariant ? "Edit Variant" : "Add New Variant"}</Label>
+                <div><Label className="text-xs">Variant Name (e.g. Brown, Large, 128GB)</Label><Input value={variantForm.variant_name} onChange={(e) => setVariantForm({ ...variantForm, variant_name: e.target.value })} placeholder="Brown" /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label className="text-xs">Price (Rs.)</Label><Input type="number" value={variantForm.price} onChange={(e) => setVariantForm({ ...variantForm, price: e.target.value })} placeholder="0" /></div>
+                  <div><Label className="text-xs">Original Price</Label><Input type="number" value={variantForm.original_price} onChange={(e) => setVariantForm({ ...variantForm, original_price: e.target.value })} placeholder="Optional" /></div>
+                </div>
+                <div><Label className="text-xs">Image URL</Label><Input value={variantForm.image} onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })} placeholder="https://..." /></div>
+                <div><Label className="text-xs">Description</Label><Textarea value={variantForm.description} onChange={(e) => setVariantForm({ ...variantForm, description: e.target.value })} placeholder="Variant specific description" rows={2} /></div>
+                <div className="flex gap-2">
+                  <Button onClick={handleSaveVariant} className="flex-1" disabled={addVariant.isPending || updateVariant.isPending}>
+                    {editingVariant ? "Update Variant" : "Add Variant"}
+                  </Button>
+                  {editingVariant && <Button variant="outline" onClick={resetVariantForm}>Cancel</Button>}
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
