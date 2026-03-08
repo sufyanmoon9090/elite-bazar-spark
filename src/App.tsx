@@ -26,6 +26,7 @@ import Notifications from "./pages/Notifications";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 import WhatsAppButton from "./components/WhatsAppButton";
+import OfflineIndicator from "./components/OfflineIndicator";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
