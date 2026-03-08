@@ -40,6 +40,11 @@ import AdminBlogPosts from "./pages/admin/BlogPosts";
 
 const queryClient = new QueryClient();
 
+const PushNotificationListener = () => {
+  usePushNotifications();
+  return null;
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
 
