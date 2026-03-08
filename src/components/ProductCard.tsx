@@ -37,7 +37,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 hover:shadow-card transition-all"
       >
         <div className="relative aspect-square overflow-hidden">
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
           {product.badge && (
             <span className="absolute top-3 left-3 bg-gradient-gold text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
               {product.badge}
