@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { products, categories } from "@/data/mockData";
+import { categories } from "@/data/mockData";
+import { useProductStore } from "@/store/productStore";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -17,6 +18,8 @@ const Shop = () => {
   const [search, setSearch] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState("default");
+
+  const { products } = useProductStore();
 
   const filtered = useMemo(() => {
     let result = products;

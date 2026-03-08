@@ -1,39 +1,25 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { products, Product } from "@/data/mockData";
+import { useProductStore } from "@/store/productStore";
+import { Product } from "@/data/mockData";
+import { Plus, Search, Pencil, Trash2 } from "lucide-react";
 import {
-  Plus,
-  Search,
-  Pencil,
-  Trash2,
-  Package,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Products() {
-  const [productList, setProductList] = useState<Product[]>(products);
+  const { products: productList, addProduct, updateProduct, deleteProduct } = useProductStore();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const { toast } = useToast();
 
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    category: "",
-    image: "",
-  });
+  const [form, setForm] = useState({ name: "", price: "", category: "", image: "", description: "" });
 
   const filtered = productList.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -41,7 +27,7 @@ export default function Products() {
 
   const openNew = () => {
     setEditingProduct(null);
-    setForm({ name: "", price: "", category: "", image: "" });
+    setForm({ name: "", price: "", category: "", image: "", description: "" });
     setDialogOpen(true);
   };
 
@@ -52,6 +38,7 @@ export default function Products() {
       price: product.price.toString(),
       category: product.category,
       image: product.image,
+      description: product.description || "",
     });
     setDialogOpen(true);
   };
@@ -59,13 +46,13 @@ export default function Products() {
   const handleSave = () => {
     if (!form.name || !form.price) return;
     if (editingProduct) {
-      setProductList((prev) =>
-        prev.map((p) =>
-          p.id === editingProduct.id
-            ? { ...p, name: form.name, price: parseFloat(form.price), category: form.category, image: form.image }
-            : p
-        )
-      );
+      updateProduct(editingProduct.id, {
+        name: form.name,
+        price: parseFloat(form.price),
+        category: form.category,
+        image: form.image,
+        description: form.description,
+      });
       toast({ title: "Product updated" });
     } else {
       const newProduct: Product = {
@@ -76,15 +63,16 @@ export default function Products() {
         image: form.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
         rating: 0,
         reviews: 0,
+        description: form.description,
       };
-      setProductList((prev) => [newProduct, ...prev]);
+      addProduct(newProduct);
       toast({ title: "Product added" });
     }
     setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => {
-    setProductList((prev) => prev.filter((p) => p.id !== id));
+    deleteProduct(id);
     toast({ title: "Product deleted", variant: "destructive" });
   };
 
@@ -93,61 +81,23 @@ export default function Products() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-display font-bold">Products</h2>
-          <p className="text-muted-foreground text-sm">
-            {productList.length} products in catalog
-          </p>
+          <p className="text-muted-foreground text-sm">{productList.length} products in catalog</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} className="gap-2">
-              <Plus className="h-4 w-4" /> Add Product
-            </Button>
+            <Button onClick={openNew} className="gap-2"><Plus className="h-4 w-4" /> Add Product</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
-                {editingProduct ? "Edit Product" : "Add New Product"}
-              </DialogTitle>
+              <DialogTitle>{editingProduct ? "Edit Product" : "Add New Product"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
-              <div>
-                <Label>Name</Label>
-                <Input
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Product name"
-                />
-              </div>
-              <div>
-                <Label>Price ($)</Label>
-                <Input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  placeholder="0.00"
-                />
-              </div>
-              <div>
-                <Label>Category</Label>
-                <Input
-                  value={form.category}
-                  onChange={(e) =>
-                    setForm({ ...form, category: e.target.value })
-                  }
-                  placeholder="electronics"
-                />
-              </div>
-              <div>
-                <Label>Image URL</Label>
-                <Input
-                  value={form.image}
-                  onChange={(e) => setForm({ ...form, image: e.target.value })}
-                  placeholder="https://..."
-                />
-              </div>
-              <Button onClick={handleSave} className="w-full">
-                {editingProduct ? "Update Product" : "Add Product"}
-              </Button>
+              <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product name" /></div>
+              <div><Label>Price ($)</Label><Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0.00" /></div>
+              <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="electronics" /></div>
+              <div><Label>Image URL</Label><Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
+              <div><Label>Description</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
+              <Button onClick={handleSave} className="w-full">{editingProduct ? "Update Product" : "Add Product"}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -155,52 +105,23 @@ export default function Products() {
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search products..."
-          className="pl-9"
-        />
+        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search products..." className="pl-9" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {filtered.map((product) => (
           <Card key={product.id} className="overflow-hidden">
             <div className="flex">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-24 h-24 object-cover"
-              />
+              <img src={product.image} alt={product.name} className="w-24 h-24 object-cover" />
               <CardContent className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-medium text-sm line-clamp-1">
-                    {product.name}
-                  </h3>
-                  <p className="text-primary font-bold text-sm mt-0.5">
-                    ${product.price.toFixed(2)}
-                  </p>
-                  <Badge variant="secondary" className="mt-1 text-[10px]">
-                    {product.category}
-                  </Badge>
+                  <h3 className="font-medium text-sm line-clamp-1">{product.name}</h3>
+                  <p className="text-primary font-bold text-sm mt-0.5">${product.price.toFixed(2)}</p>
+                  <Badge variant="secondary" className="mt-1 text-[10px]">{product.category}</Badge>
                 </div>
                 <div className="flex gap-1 mt-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-7 w-7"
-                    onClick={() => openEdit(product)}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-7 w-7 text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(product)}><Pencil className="h-3.5 w-3.5" /></Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
             </div>

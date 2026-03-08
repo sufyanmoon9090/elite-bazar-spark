@@ -106,8 +106,8 @@ const Navbar = () => {
           {/* Auth */}
           {user ? (
             <div className="hidden sm:flex items-center gap-2">
-              <Link to="/admin" className="p-2 text-muted-foreground hover:text-primary transition-colors" title="Admin">
-                <User size={20} />
+              <Link to="/admin" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Admin">
+                <User size={16} />
               </Link>
               <button
                 onClick={() => signOut()}
