@@ -19,6 +19,7 @@ import Deals from "./pages/Deals";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
+import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AdminLayout from "./components/admin/AdminLayout";
