@@ -40,6 +40,7 @@ export default function Settings() {
   const saveAll = async () => {
     try {
       await Promise.all([
+        updateSetting.mutateAsync({ key: "general", data: general }),
         updateSetting.mutateAsync({ key: "hero", data: hero }),
         updateSetting.mutateAsync({ key: "categories_heading", data: catHeading }),
         updateSetting.mutateAsync({ key: "deals", data: deals }),
