@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useCreateOrder } from "@/hooks/useOrders";
+import { useValidateCoupon, useIncrementCouponUsage, Coupon } from "@/hooks/useCoupons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import { CreditCard, MapPin, Truck, Check, ArrowLeft, Banknote } from "lucide-react";
+import { CreditCard, MapPin, Truck, Check, ArrowLeft, Banknote, Tag, X } from "lucide-react";
 import { provinces, getCitiesByProvince } from "@/data/pakistanCities";
 
 const steps = ["Address", "Shipping", "Payment", "Confirmation"];
@@ -20,11 +21,22 @@ const Checkout = () => {
   const { items, totalPrice, totalItems, clearCart } = useCart();
   const { user } = useAuth();
   const createOrder = useCreateOrder();
+  const validateCoupon = useValidateCoupon();
+  const incrementUsage = useIncrementCouponUsage();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [address, setAddress] = useState({ name: "", street: "", city: "", province: "", zip: "", phone: "" });
   const [shipping, setShipping] = useState("standard");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const shippingCost = shipping === "express" ? 300 : shipping === "overnight" ? 500 : 0;
+
+  const discount = appliedCoupon
+    ? appliedCoupon.type === "percent"
+      ? Math.round(totalPrice * appliedCoupon.discount / 100)
+      : appliedCoupon.discount
+    : 0;
+  const finalTotal = totalPrice + shippingCost - discount;
 
   if (items.length === 0) {
     return (
@@ -38,6 +50,23 @@ const Checkout = () => {
       </div>
     );
   }
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    try {
+      const coupon = await validateCoupon.mutateAsync({ code: couponCode, orderTotal: totalPrice });
+      setAppliedCoupon(coupon);
+      toast.success(`Coupon "${coupon.code}" applied! ${coupon.type === "percent" ? `${coupon.discount}%` : `Rs. ${coupon.discount}`} off`);
+    } catch (err: any) {
+      toast.error(err.message || "Invalid coupon");
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    toast.info("Coupon removed");
+  };
 
   const handlePlaceOrder = async () => {
     if (!user) {
@@ -53,11 +82,14 @@ const Checkout = () => {
         user_id: user.id,
         order_number: orderNumber,
         items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
-        total: totalPrice,
+        total: finalTotal,
         shipping_cost: shippingCost,
         shipping_method: shipping,
         address,
       });
+      if (appliedCoupon) {
+        await incrementUsage.mutateAsync(appliedCoupon.id);
+      }
       toast.success(`Order ${orderNumber} placed successfully! 🎉`);
       clearCart();
       navigate("/my-orders");
@@ -215,10 +247,45 @@ const Checkout = () => {
                       {shippingCost === 0 ? "Free" : `Rs. ${shippingCost.toLocaleString()}`}
                     </span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-400">
+                      <span>Discount</span>
+                      <span>- Rs. {discount.toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="border-t border-border pt-3 flex justify-between font-display font-bold">
                     <span>Total</span>
-                    <span className="text-gradient-gold text-lg">Rs. {(totalPrice + shippingCost).toLocaleString()}</span>
+                    <span className="text-gradient-gold text-lg">Rs. {finalTotal.toLocaleString()}</span>
                   </div>
+                </div>
+
+                {/* Coupon Section */}
+                <div className="border-t border-border pt-4 mt-4">
+                  <p className="text-sm font-medium mb-2 flex items-center gap-1.5"><Tag size={14} className="text-primary" /> Coupon Code</p>
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between bg-primary/10 rounded-lg px-3 py-2">
+                      <div>
+                        <span className="font-mono font-bold text-sm text-primary">{appliedCoupon.code}</span>
+                        <span className="text-xs text-muted-foreground ml-2">
+                          ({appliedCoupon.type === "percent" ? `${appliedCoupon.discount}%` : `Rs. ${appliedCoupon.discount}`} off)
+                        </span>
+                      </div>
+                      <button onClick={removeCoupon} className="text-muted-foreground hover:text-destructive"><X size={16} /></button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        className="font-mono text-sm"
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                      />
+                      <Button size="sm" variant="outline" onClick={handleApplyCoupon} disabled={validateCoupon.isPending} className="shrink-0">
+                        {validateCoupon.isPending ? "..." : "Apply"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
