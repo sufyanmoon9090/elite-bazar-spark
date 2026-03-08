@@ -19,6 +19,7 @@ const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: products = [], isLoading } = useProducts();
   const { data: variants = [] } = useProductVariants(id);
+  const { data: liveReviews = [] } = useProductReviews(id || "");
   const product = products.find((p) => p.id === id);
   const { addToCart, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
