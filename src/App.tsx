@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AnimatePresence } from "framer-motion";
+import { ThemeProvider } from "next-themes";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
@@ -75,22 +76,24 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
-            <Toaster />
-            <Sonner />
-            <WhatsAppButton />
-            <BrowserRouter>
-              <AnimatedRoutes />
-            </BrowserRouter>
-          </FavoritesProvider>
-        </CartProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <CartProvider>
+            <FavoritesProvider>
+              <Toaster />
+              <Sonner />
+              <WhatsAppButton />
+              <BrowserRouter>
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </FavoritesProvider>
+          </CartProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
