@@ -106,21 +106,17 @@ const Checkout = () => {
                       <div><Label>Street Address / Area *</Label><Input value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} placeholder="House #12, Street 5, Gulberg III" /></div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label>City *</Label>
-                          <select value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} className="w-full h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground">
-                            <option value="">Select City</option>
-                            {pakistanCities.map((c) => <option key={c} value={c}>{c}</option>)}
+                          <Label>Province *</Label>
+                          <select value={address.province} onChange={(e) => setAddress({ ...address, province: e.target.value, city: "" })} className="w-full h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground">
+                            <option value="">Select Province</option>
+                            {provinces.map((p) => <option key={p} value={p}>{p}</option>)}
                           </select>
                         </div>
                         <div>
-                          <Label>Province</Label>
-                          <select value={address.province} onChange={(e) => setAddress({ ...address, province: e.target.value })} className="w-full h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground">
-                            <option value="">Select Province</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Sindh">Sindh</option>
-                            <option value="KPK">Khyber Pakhtunkhwa</option>
-                            <option value="Balochistan">Balochistan</option>
-                            <option value="ICT">Islamabad Capital Territory</option>
+                          <Label>City *</Label>
+                          <select value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} className="w-full h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground" disabled={!address.province}>
+                            <option value="">{address.province ? "Select City" : "Select Province First"}</option>
+                            {getCitiesByProvince(address.province).map((c) => <option key={c} value={c}>{c}</option>)}
                           </select>
                         </div>
                       </div>
