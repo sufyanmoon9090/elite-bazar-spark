@@ -50,18 +50,19 @@ export function useAddProduct() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (product: Omit<Product, "id">) => {
-      const { error } = await supabase.from("products").insert({
+      const row = {
         name: product.name,
         price: product.price,
         original_price: product.originalPrice ?? null,
         image: product.image,
-        images: (product.images ?? []) as unknown as Record<string, unknown>,
+        images: (product.images ?? []) as unknown as import("@/integrations/supabase/types").Json,
         category: product.category,
         rating: product.rating,
         reviews: product.reviews,
         badge: product.badge ?? null,
         description: product.description ?? null,
-      });
+      };
+      const { error } = await supabase.from("products").insert(row);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
