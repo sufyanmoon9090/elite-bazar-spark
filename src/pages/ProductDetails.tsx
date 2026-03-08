@@ -251,7 +251,7 @@ const ProductDetails = () => {
           <div className="bg-card border border-border rounded-xl p-6 mb-16">
             <h2 className="text-xl font-display font-bold mb-4">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Warranty", "1 Year"], ["Delivery", "All Pakistan"], ["Payment", "Cash on Delivery"]].map(([label, value]) => (
+              {[["Brand", "Elite Bazar"], ["Category", product.category], ["Rating", `${product.rating}/5`], ["Reviews", `${product.reviews} reviews`], ["Availability", "In Stock"], ["Delivery", "All Pakistan"], ["Payment", "Cash on Delivery"]].map(([label, value]) => (
                 <div key={label} className="flex items-center gap-2 py-2 border-b border-border/50">
                   <Check size={14} className="text-primary shrink-0" />
                   <span className="text-sm text-muted-foreground">{label}:</span>
