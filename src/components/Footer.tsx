@@ -59,7 +59,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-border pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2026 Elite Bazar. All rights reserved.
+            © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
         </div>
       </div>
