@@ -151,8 +151,8 @@
   }
 
   .glass {
-    background: hsl(220 18% 10% / 0.8);
+    background: hsl(var(--background) / 0.85);
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(220 15% 18% / 0.5);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
 }
