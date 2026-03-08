@@ -41,13 +41,17 @@ const Cart = () => {
                       exit={{ opacity: 0 }}
                       className="bg-card border border-border rounded-xl p-4 flex gap-4"
                     >
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-24 h-24 rounded-lg object-cover"
-                      />
+                      <Link to={`/product/${item.id}`}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-24 h-24 rounded-lg object-cover hover:opacity-80 transition-opacity"
+                        />
+                      </Link>
                       <div className="flex-1">
-                        <h3 className="font-display font-semibold text-sm mb-1">{item.name}</h3>
+                        <Link to={`/product/${item.id}`}>
+                          <h3 className="font-display font-semibold text-sm mb-1 hover:text-primary transition-colors">{item.name}</h3>
+                        </Link>
                         <p className="text-sm text-gradient-gold font-bold">${item.price}</p>
                         <div className="flex items-center gap-3 mt-3">
                           <button
@@ -92,9 +96,11 @@ const Cart = () => {
                       <span className="text-gradient-gold text-lg">${totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
-                  <Button className="w-full bg-gradient-gold text-primary-foreground font-semibold shadow-gold hover:opacity-90">
-                    Proceed to Checkout
-                  </Button>
+                  <Link to="/checkout">
+                    <Button className="w-full bg-gradient-gold text-primary-foreground font-semibold shadow-gold hover:opacity-90">
+                      Proceed to Checkout
+                    </Button>
+                  </Link>
                   <Link to="/shop" className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground hover:text-primary transition-colors">
                     <ArrowLeft size={14} /> Continue Shopping
                   </Link>
