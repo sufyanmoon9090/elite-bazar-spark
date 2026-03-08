@@ -32,8 +32,7 @@ export function useUpdateProfile() {
     mutationFn: async ({ id, ...updates }: Partial<Profile> & { id: string }) => {
       const { error } = await supabase
         .from("profiles")
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq("id", id);
+        .upsert({ id, ...updates, updated_at: new Date().toISOString() })
       if (error) throw error;
     },
     onSuccess: (_d, variables) => {
