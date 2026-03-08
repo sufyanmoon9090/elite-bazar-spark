@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import defaultLogo from "@/assets/logo.png";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const footerLinks = {
   "Quick Links": [
