@@ -1,0 +1,105 @@
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { products, categories } from "@/data/mockData";
+import ProductCard from "@/components/ProductCard";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const Shop = () => {
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
+
+  const filtered = useMemo(() => {
+    let result = products;
+    if (selectedCategory !== "all") {
+      result = result.filter((p) => p.category === selectedCategory);
+    }
+    if (search) {
+      result = result.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+    }
+    if (sortBy === "price-low") result = [...result].sort((a, b) => a.price - b.price);
+    if (sortBy === "price-high") result = [...result].sort((a, b) => b.price - a.price);
+    if (sortBy === "rating") result = [...result].sort((a, b) => b.rating - a.rating);
+    return result;
+  }, [search, selectedCategory, sortBy]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main className="pt-24 pb-20">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+            <h1 className="text-3xl sm:text-4xl font-display font-bold mb-2">
+              Our <span className="text-gradient-gold">Collection</span>
+            </h1>
+            <p className="text-muted-foreground">Discover premium products curated for you</p>
+          </motion.div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="relative flex-1 max-w-md">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search products..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 bg-card border-border"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("all")}
+                className={selectedCategory === "all" ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}
+              >
+                All
+              </Button>
+              {categories.slice(0, 4).map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant={selectedCategory === cat.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={selectedCategory === cat.id ? "bg-gradient-gold text-primary-foreground" : "border-border text-muted-foreground"}
+                >
+                  {cat.name}
+                </Button>
+              ))}
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+            >
+              <option value="default">Sort by</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
+            </select>
+          </div>
+
+          {/* Products */}
+          {filtered.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filtered.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-muted-foreground">No products found matching your criteria.</p>
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Shop;
