@@ -20,7 +20,8 @@ const defaults = {
 
 const HeroSection = () => {
   const { data: settings } = useSiteSettings("hero");
-  const s = { ...defaults, ...settings };
+  const { data: general } = useSiteSettings("general");
+  const s = { ...defaults, ...settings, title: settings?.title || general?.site_name || defaults.title };
 
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
