@@ -34,6 +34,7 @@ import Coupons from "./pages/admin/Coupons";
 import AdminNotifications from "./pages/admin/Notifications";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+import AdminCategories from "./pages/admin/Categories";
 
 const queryClient = new QueryClient();
 
