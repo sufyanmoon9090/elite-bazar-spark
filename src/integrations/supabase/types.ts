@@ -195,6 +195,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_all_users_for_admin: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
