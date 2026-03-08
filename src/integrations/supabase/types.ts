@@ -74,6 +74,45 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount: number
+          expires_at: string
+          id: string
+          min_order: number
+          type: string
+          usage_limit: number
+          used: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount?: number
+          expires_at?: string
+          id?: string
+          min_order?: number
+          type?: string
+          usage_limit?: number
+          used?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount?: number
+          expires_at?: string
+          id?: string
+          min_order?: number
+          type?: string
+          usage_limit?: number
+          used?: number
+        }
+        Relationships: []
+      }
       notification_reads: {
         Row: {
           id: string
