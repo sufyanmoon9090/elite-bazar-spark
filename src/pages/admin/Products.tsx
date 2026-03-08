@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useProducts, useAddProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, ProductVariant } from "@/hooks/useProductVariants";
+import { useCategories } from "@/hooks/useCategories";
 import { Product } from "@/data/mockData";
 import { Plus, Search, Pencil, Trash2, X, ImagePlus, Layers } from "lucide-react";
 import {
