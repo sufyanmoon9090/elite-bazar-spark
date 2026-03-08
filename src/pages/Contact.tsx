@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageCircle } from "lucide-react";
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -39,7 +39,7 @@ const Contact = () => {
               <div className="space-y-6">
                 {[
                   { icon: Mail, label: "Email", value: "support@elitebazar.com" },
-                  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
+                  { icon: Phone, label: "WhatsApp", value: "+92 327 625 4377" },
                   { icon: MapPin, label: "Address", value: "123 Commerce St, New York, NY 10001" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-4">
@@ -84,9 +84,19 @@ const Contact = () => {
                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
-                    <Button type="submit" className="bg-gradient-gold text-primary-foreground font-semibold gap-2">
-                      <Send size={16} /> Send Message
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button type="submit" className="bg-gradient-gold text-primary-foreground font-semibold gap-2">
+                        <Send size={16} /> Send Message
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="gap-2 border-green-500 text-green-600 hover:bg-green-500/10"
+                        onClick={() => window.open("https://wa.me/923276254377", "_blank")}
+                      >
+                        <MessageCircle size={16} /> Contact on WhatsApp
+                      </Button>
+                    </div>
                   </form>
                 </CardContent>
               </Card>
