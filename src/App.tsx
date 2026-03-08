@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
@@ -34,6 +36,42 @@ import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
+        <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
+        <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
+        <Route path="/product/:id" element={<PageTransition><ProductDetails /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+        <Route path="/deals" element={<PageTransition><Deals /></PageTransition>} />
+        <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
+        <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+        <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
+        <Route path="/my-orders" element={<PageTransition><MyOrders /></PageTransition>} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<PageTransition><Dashboard /></PageTransition>} />
+          <Route path="products" element={<PageTransition><Products /></PageTransition>} />
+          <Route path="orders" element={<PageTransition><Orders /></PageTransition>} />
+          <Route path="customers" element={<PageTransition><Customers /></PageTransition>} />
+          <Route path="coupons" element={<PageTransition><Coupons /></PageTransition>} />
+          <Route path="notifications" element={<PageTransition><AdminNotifications /></PageTransition>} />
+          <Route path="reports" element={<PageTransition><Reports /></PageTransition>} />
+          <Route path="settings" element={<PageTransition><Settings /></PageTransition>} />
+        </Route>
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -44,33 +82,7 @@ const App = () => (
             <Sonner />
             <WhatsAppButton />
             <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/product/:id" element={<ProductDetails />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/deals" element={<Deals />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="products" element={<Products />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="coupons" element={<Coupons />} />
-                  <Route path="notifications" element={<AdminNotifications />} />
-                  <Route path="reports" element={<Reports />} />
-                  <Route path="settings" element={<Settings />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnimatedRoutes />
             </BrowserRouter>
           </FavoritesProvider>
         </CartProvider>
