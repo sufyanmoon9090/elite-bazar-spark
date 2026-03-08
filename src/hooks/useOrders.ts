@@ -35,7 +35,7 @@ export function useMyOrders(userId: string | undefined) {
         .eq("user_id", userId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data || []) as Order[];
+      return (data || []) as unknown as Order[];
     },
   });
 }
