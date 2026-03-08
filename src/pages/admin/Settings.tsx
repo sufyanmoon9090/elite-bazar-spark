@@ -26,6 +26,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (allSettings) {
+      setGeneral(allSettings.general || {});
       setHero(allSettings.hero || {});
       setCatHeading(allSettings.categories_heading || {});
       setDeals(allSettings.deals || {});
