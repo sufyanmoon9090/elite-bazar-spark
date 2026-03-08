@@ -8,8 +8,15 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import NewsletterSection from "@/components/NewsletterSection";
 import BlogSection from "@/components/BlogSection";
 import Footer from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Index = () => {
+  const { data: dealsSettings } = useSiteSettings("deals");
+  const { data: whyChooseSettings } = useSiteSettings("why_choose_us");
+
+  const showDeals = dealsSettings?.enabled !== false;
+  const showWhyChoose = whyChooseSettings?.enabled !== false;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -17,8 +24,8 @@ const Index = () => {
         <HeroSection />
         <CategoriesSection />
         <TrendingProducts />
-        <DealsSection />
-        <WhyChooseUs />
+        {showDeals && <DealsSection />}
+        {showWhyChoose && <WhyChooseUs />}
         <TestimonialsSection />
         <BlogSection />
         <NewsletterSection />
