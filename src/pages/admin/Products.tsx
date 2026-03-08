@@ -9,6 +9,7 @@ import { useProductVariants, useAddVariant, useUpdateVariant, useDeleteVariant, 
 import { useCategories } from "@/hooks/useCategories";
 import { Product } from "@/data/mockData";
 import { Plus, Search, Pencil, Trash2, X, ImagePlus, Layers } from "lucide-react";
+import ImageUpload, { MultiImageUpload } from "@/components/admin/ImageUpload";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
