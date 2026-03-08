@@ -5,19 +5,20 @@ const footerLinks = {
   "Quick Links": [
     { label: "Home", to: "/" },
     { label: "Shop", to: "/shop" },
-    { label: "About Us", to: "/" },
-    { label: "Contact", to: "/" },
+    { label: "Deals", to: "/deals" },
+    { label: "Blog", to: "/blog" },
+    { label: "Contact", to: "/contact" },
   ],
   "Customer Service": [
-    { label: "FAQ", to: "/" },
-    { label: "Shipping Info", to: "/" },
-    { label: "Returns", to: "/" },
-    { label: "Track Order", to: "/" },
+    { label: "My Favorites", to: "/favorites" },
+    { label: "Cart", to: "/cart" },
+    { label: "Login / Register", to: "/auth" },
+    { label: "Track Order", to: "/admin/orders" },
   ],
   "Legal": [
-    { label: "Privacy Policy", to: "/" },
-    { label: "Terms & Conditions", to: "/" },
-    { label: "Cookie Policy", to: "/" },
+    { label: "Privacy Policy", to: "/contact" },
+    { label: "Terms & Conditions", to: "/contact" },
+    { label: "Admin Panel", to: "/admin" },
   ],
 };
 

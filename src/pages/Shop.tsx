@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { products, categories } from "@/data/mockData";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
@@ -9,8 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const Shop = () => {
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "all";
+  const initialQuery = searchParams.get("q") || "";
+
+  const [search, setSearch] = useState(initialQuery);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState("default");
 
   const filtered = useMemo(() => {
@@ -59,7 +64,7 @@ const Shop = () => {
               >
                 All
               </Button>
-              {categories.slice(0, 4).map((cat) => (
+              {categories.map((cat) => (
                 <Button
                   key={cat.id}
                   variant={selectedCategory === cat.id ? "default" : "outline"}
