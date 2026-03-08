@@ -219,7 +219,7 @@ const ProductDetails = () => {
                 {activeDescription || `Experience premium quality with the ${product.name}. Crafted with attention to detail and designed for the modern lifestyle.`}
               </p>
 
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="flex items-center border border-border rounded-lg">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors">-</button>
                   <span className="px-4 py-2 font-medium">{quantity}</span>
@@ -229,7 +229,7 @@ const ProductDetails = () => {
                   <ShoppingCart size={18} />
                   {isInCart(product.id) ? "Add More" : "Add to Cart"}
                 </Button>
-                <Button variant="outline" size="lg" onClick={() => { toggleFavorite(product.id); toast.success(isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"); }} className={`border-border ${isFavorite(product.id) ? "text-red-500" : ""}`}>
+                <Button variant="outline" size="icon" onClick={() => { toggleFavorite(product.id); toast.success(isFavorite(product.id) ? "Removed from favorites" : "Added to favorites"); }} className={`shrink-0 h-11 w-11 border-border ${isFavorite(product.id) ? "text-red-500" : ""}`}>
                   <Heart size={18} className={isFavorite(product.id) ? "fill-current" : ""} />
                 </Button>
               </div>
