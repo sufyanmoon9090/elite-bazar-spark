@@ -23,13 +23,13 @@ const Profile = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  // Initialize form from profile
-  if (profile && !form) {
+  // Initialize form from profile (or defaults when no profile exists yet)
+  if (!isLoading && !form) {
     setForm({
-      full_name: profile.full_name || "",
-      phone: profile.phone || "",
-      city: profile.city || "",
-      address: profile.address || "",
+      full_name: profile?.full_name || "",
+      phone: profile?.phone || "",
+      city: profile?.city || "",
+      address: profile?.address || "",
     });
   }
 
