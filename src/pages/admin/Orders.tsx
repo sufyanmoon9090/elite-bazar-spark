@@ -85,9 +85,9 @@ export default function Orders() {
                   <tr className="border-b border-border">
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Order #</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Customer</th>
+                    <th className="text-left py-3 px-4 text-muted-foreground font-medium">Address</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Items</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Total</th>
-                    <th className="text-left py-3 px-4 text-muted-foreground font-medium">City</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Date</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Status</th>
                     <th className="text-left py-3 px-4 text-muted-foreground font-medium">Actions</th>
@@ -97,6 +97,9 @@ export default function Orders() {
                   {filtered.map((order) => {
                     const addr = order.address as any;
                     const items = order.items as any[];
+                    const fullAddress = [addr?.address, addr?.city]
+                      .filter((value) => typeof value === "string" && value.trim().length > 0)
+                      .join(", ");
                     return (
                       <tr key={order.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                         <td className="py-3 px-4 font-medium">{order.order_number}</td>
@@ -106,9 +109,11 @@ export default function Orders() {
                             <p className="text-xs text-muted-foreground">{addr?.phone || ""}</p>
                           </div>
                         </td>
+                        <td className="py-3 px-4 text-muted-foreground max-w-[220px]">
+                          <p className="truncate" title={fullAddress || "—"}>{fullAddress || "—"}</p>
+                        </td>
                         <td className="py-3 px-4">{items.length} items</td>
                         <td className="py-3 px-4">Rs. {(Number(order.total) + Number(order.shipping_cost)).toLocaleString()}</td>
-                        <td className="py-3 px-4 text-muted-foreground">{addr?.city || "—"}</td>
                         <td className="py-3 px-4 text-muted-foreground">
                           {new Date(order.created_at).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}
                         </td>
