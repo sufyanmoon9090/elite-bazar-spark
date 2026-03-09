@@ -97,7 +97,7 @@ export default function Orders() {
                   {filtered.map((order) => {
                     const addr = order.address as any;
                     const items = order.items as any[];
-                    const fullAddress = [addr?.address, addr?.city]
+                    const fullAddress = [addr?.street, addr?.city, addr?.province, addr?.zip]
                       .filter((value) => typeof value === "string" && value.trim().length > 0)
                       .join(", ");
                     return (
