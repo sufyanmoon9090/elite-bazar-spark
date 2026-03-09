@@ -50,6 +50,7 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "testimonials_heading", data: testimonialsH }),
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
+        updateSetting.mutateAsync({ key: "trending_products", data: trending }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {
