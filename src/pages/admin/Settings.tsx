@@ -35,6 +35,7 @@ export default function Settings() {
       setTestimonialsH(allSettings.testimonials_heading || {});
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
+      setTrending(allSettings.trending_products || { count: 8 });
     }
   }, [allSettings]);
 
