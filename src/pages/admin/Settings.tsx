@@ -23,6 +23,7 @@ export default function Settings() {
   const [testimonialsH, setTestimonialsH] = useState<any>({});
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
+  const [trending, setTrending] = useState<any>({});
 
   useEffect(() => {
     if (allSettings) {
