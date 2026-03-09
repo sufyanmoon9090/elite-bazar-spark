@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon } from "lucide-react";
+import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon, TrendingUp, Minus, Plus } from "lucide-react";
 import { useAllSiteSettings, useUpdateSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
@@ -23,6 +23,7 @@ export default function Settings() {
   const [testimonialsH, setTestimonialsH] = useState<any>({});
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
+  const [trending, setTrending] = useState<any>({});
 
   useEffect(() => {
     if (allSettings) {
@@ -34,6 +35,7 @@ export default function Settings() {
       setTestimonialsH(allSettings.testimonials_heading || {});
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
+      setTrending(allSettings.trending_products || { count: 8 });
     }
   }, [allSettings]);
 
@@ -48,6 +50,7 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "testimonials_heading", data: testimonialsH }),
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
+        updateSetting.mutateAsync({ key: "trending_products", data: trending }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {
@@ -132,7 +135,27 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Deals Section */}
+      {/* Trending Products */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Trending Products</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={trending.title || ""} onChange={(e) => setTrending({ ...trending, title: e.target.value })} placeholder="Trending" /></div>
+            <div><Label>Highlight</Label><Input value={trending.highlight || ""} onChange={(e) => setTrending({ ...trending, highlight: e.target.value })} placeholder="Products" /></div>
+          </div>
+          <div><Label>Subtitle</Label><Input value={trending.subtitle || ""} onChange={(e) => setTrending({ ...trending, subtitle: e.target.value })} /></div>
+          <Separator />
+          <div>
+            <Label>Products to Show</Label>
+            <div className="flex items-center gap-3 mt-2">
+              <Button variant="outline" size="icon" onClick={() => setTrending({ ...trending, count: Math.max(1, (trending.count ?? 8) - 1) })}><Minus className="h-4 w-4" /></Button>
+              <span className="text-lg font-bold w-8 text-center">{trending.count ?? 8}</span>
+              <Button variant="outline" size="icon" onClick={() => setTrending({ ...trending, count: Math.min(20, (trending.count ?? 8) + 1) })}><Plus className="h-4 w-4" /></Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Zap className="h-4 w-4" /> Deals Section</CardTitle></CardHeader>
         <CardContent className="space-y-3">
