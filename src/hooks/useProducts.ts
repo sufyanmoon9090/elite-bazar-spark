@@ -85,7 +85,7 @@ export function useUpdateProduct() {
       if (data.badge !== undefined) updates.badge = data.badge;
       if (data.description !== undefined) updates.description = data.description;
 
-      const { error } = await supabase.from("products").update(updates).eq("id", id);
+      const { error } = await supabase.from("products").update(updates as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
