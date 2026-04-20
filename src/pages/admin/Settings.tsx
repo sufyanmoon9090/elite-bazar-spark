@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon, TrendingUp, Minus, Plus } from "lucide-react";
+import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon, TrendingUp, Minus, Plus, Phone, Palette } from "lucide-react";
 import { useAllSiteSettings, useUpdateSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
@@ -24,6 +24,8 @@ export default function Settings() {
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
   const [trending, setTrending] = useState<any>({});
+  const [contact, setContact] = useState<any>({});
+  const [whatsapp, setWhatsapp] = useState<any>({});
 
   useEffect(() => {
     if (allSettings) {
@@ -36,6 +38,8 @@ export default function Settings() {
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
       setTrending(allSettings.trending_products || { count: 8 });
+      setContact(allSettings.contact || {});
+      setWhatsapp(allSettings.global_whatsapp || {});
     }
   }, [allSettings]);
 
@@ -51,6 +55,8 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
         updateSetting.mutateAsync({ key: "trending_products", data: trending }),
+        updateSetting.mutateAsync({ key: "contact", data: contact }),
+        updateSetting.mutateAsync({ key: "global_whatsapp", data: whatsapp }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {
