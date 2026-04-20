@@ -236,6 +236,8 @@ const ProductDetails = () => {
                 </Button>
               </div>
 
+              <WhatsAppOrderButton productName={product.name} />
+
               <div className="grid grid-cols-3 gap-4 border-t border-border pt-6">
                 <div className="flex flex-col items-center text-center gap-2">
                   <Truck size={20} className="text-primary" /><span className="text-xs text-muted-foreground">Free Delivery</span>

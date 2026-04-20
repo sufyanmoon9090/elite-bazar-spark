@@ -48,6 +48,16 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               {footerText}
             </p>
+            {showWAFooter && (
+              <a
+                href={`https://wa.me/${waNumber}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-colors"
+              >
+                <MessageCircle size={16} /> {waDisplay}
+              </a>
+            )}
           </div>
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
