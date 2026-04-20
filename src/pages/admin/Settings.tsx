@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon, TrendingUp, Minus, Plus } from "lucide-react";
+import { Save, Store, Bell, Shield, Layout, Sparkles, Zap, Award, MessageSquare, BookOpen, Mail, Globe, ImageIcon, TrendingUp, Minus, Plus, Phone, Palette, MessageCircle as MessageCircleIcon } from "lucide-react";
 import { useAllSiteSettings, useUpdateSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
@@ -24,6 +24,8 @@ export default function Settings() {
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
   const [trending, setTrending] = useState<any>({});
+  const [contact, setContact] = useState<any>({});
+  const [whatsapp, setWhatsapp] = useState<any>({});
 
   useEffect(() => {
     if (allSettings) {
@@ -36,6 +38,8 @@ export default function Settings() {
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
       setTrending(allSettings.trending_products || { count: 8 });
+      setContact(allSettings.contact || {});
+      setWhatsapp(allSettings.global_whatsapp || {});
     }
   }, [allSettings]);
 
@@ -51,6 +55,8 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
         updateSetting.mutateAsync({ key: "trending_products", data: trending }),
+        updateSetting.mutateAsync({ key: "contact", data: contact }),
+        updateSetting.mutateAsync({ key: "global_whatsapp", data: whatsapp }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {
@@ -237,6 +243,91 @@ export default function Settings() {
           </div>
           <div><Label>Subtitle</Label><Input value={newsletter.subtitle || ""} onChange={(e) => setNewsletter({ ...newsletter, subtitle: e.target.value })} /></div>
           <div><Label>Button Text</Label><Input value={newsletter.button || ""} onChange={(e) => setNewsletter({ ...newsletter, button: e.target.value })} /></div>
+        </CardContent>
+      </Card>
+
+      {/* Contact Page */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Phone className="h-4 w-4" /> Contact Page</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div>
+            <Label>Design Template</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {[
+                { id: "classic", name: "Classic", desc: "Current default style" },
+                { id: "bold_dark", name: "Bold Dark", desc: "Big typography + sticker badges" },
+                { id: "warm_friendly", name: "Warm Friendly", desc: "Yellow card, illustration vibe" },
+                { id: "modern_minimal", name: "Modern Minimal", desc: "Clean, elegant, serif accent" },
+              ].map((d) => (
+                <button
+                  key={d.id}
+                  type="button"
+                  onClick={() => setContact({ ...contact, design: d.id })}
+                  className={`text-left p-3 rounded-lg border-2 transition-all ${(contact.design || "classic") === d.id ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                >
+                  <p className="font-semibold text-sm">{d.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{d.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+          <Separator />
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Title</Label><Input value={contact.title || ""} onChange={(e) => setContact({ ...contact, title: e.target.value })} placeholder="Contact" /></div>
+            <div><Label>Highlight</Label><Input value={contact.highlight || ""} onChange={(e) => setContact({ ...contact, highlight: e.target.value })} placeholder="Us" /></div>
+          </div>
+          <div><Label>Subtitle</Label><Input value={contact.subtitle || ""} onChange={(e) => setContact({ ...contact, subtitle: e.target.value })} /></div>
+          <div><Label>Form Title</Label><Input value={contact.form_title || ""} onChange={(e) => setContact({ ...contact, form_title: e.target.value })} /></div>
+          <Separator />
+          <div><Label>Email</Label><Input value={contact.email || ""} onChange={(e) => setContact({ ...contact, email: e.target.value })} placeholder="support@elitebazar.com" /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>WhatsApp Number (no +)</Label><Input value={contact.whatsapp || ""} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} placeholder="923276254377" /></div>
+            <div><Label>WhatsApp Display</Label><Input value={contact.whatsapp_display || ""} onChange={(e) => setContact({ ...contact, whatsapp_display: e.target.value })} placeholder="+92 327 625 4377" /></div>
+          </div>
+          <div><Label>Address</Label><Input value={contact.address || ""} onChange={(e) => setContact({ ...contact, address: e.target.value })} /></div>
+          <Separator />
+          <Label className="text-xs text-muted-foreground flex items-center gap-1"><Palette className="h-3 w-3" /> Colors</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Primary Color</Label>
+              <div className="flex gap-2">
+                <Input type="color" value={contact.primary_color || "#FFD700"} onChange={(e) => setContact({ ...contact, primary_color: e.target.value })} className="w-16 h-10 p-1" />
+                <Input value={contact.primary_color || "#FFD700"} onChange={(e) => setContact({ ...contact, primary_color: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Accent Color (WhatsApp)</Label>
+              <div className="flex gap-2">
+                <Input type="color" value={contact.accent_color || "#22c55e"} onChange={(e) => setContact({ ...contact, accent_color: e.target.value })} className="w-16 h-10 p-1" />
+                <Input value={contact.accent_color || "#22c55e"} onChange={(e) => setContact({ ...contact, accent_color: e.target.value })} />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Global WhatsApp */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><MessageCircleIcon className="h-4 w-4" /> WhatsApp Integration</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>WhatsApp Number (no +)</Label><Input value={whatsapp.number || ""} onChange={(e) => setWhatsapp({ ...whatsapp, number: e.target.value })} placeholder="923276254377" /></div>
+            <div><Label>Display Number</Label><Input value={whatsapp.display || ""} onChange={(e) => setWhatsapp({ ...whatsapp, display: e.target.value })} placeholder="+92 327 625 4377" /></div>
+          </div>
+          <div><Label>Default Message</Label><Input value={whatsapp.default_message || ""} onChange={(e) => setWhatsapp({ ...whatsapp, default_message: e.target.value })} placeholder="Hi! I am interested in your products." /></div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <Label>Show Floating Button</Label>
+            <Switch checked={whatsapp.show_floating !== false} onCheckedChange={(v) => setWhatsapp({ ...whatsapp, show_floating: v })} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label>Show in Footer</Label>
+            <Switch checked={whatsapp.show_footer !== false} onCheckedChange={(v) => setWhatsapp({ ...whatsapp, show_footer: v })} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label>Show on Product Pages</Label>
+            <Switch checked={whatsapp.show_product !== false} onCheckedChange={(v) => setWhatsapp({ ...whatsapp, show_product: v })} />
+          </div>
         </CardContent>
       </Card>
 

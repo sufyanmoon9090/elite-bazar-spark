@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import defaultLogo from "@/assets/logo.png";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useTheme } from "next-themes";
+import { MessageCircle } from "lucide-react";
 
 const footerLinks = {
   "Quick Links": [
@@ -26,10 +27,14 @@ const footerLinks = {
 
 const Footer = () => {
   const { data: general } = useSiteSettings("general");
+  const { data: wa } = useSiteSettings("global_whatsapp");
   const { resolvedTheme } = useTheme();
   const siteName = general?.site_name || "Elite Bazar";
   const logoSrc = resolvedTheme === "dark" && general?.dark_logo_url ? general.dark_logo_url : (general?.logo_url || defaultLogo);
   const footerText = general?.footer_text || "Your premium destination for quality products and exceptional shopping experiences.";
+  const waNumber = wa?.number || "923276254377";
+  const waDisplay = wa?.display || "+92 327 625 4377";
+  const showWAFooter = wa?.show_footer !== false;
 
   return (
     <footer className="bg-card border-t border-border pt-16 pb-8">
@@ -43,6 +48,16 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               {footerText}
             </p>
+            {showWAFooter && (
+              <a
+                href={`https://wa.me/${waNumber}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-colors"
+              >
+                <MessageCircle size={16} /> {waDisplay}
+              </a>
+            )}
           </div>
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>

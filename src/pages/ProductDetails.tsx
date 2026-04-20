@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import ProductReviews from "@/components/ProductReviews";
+import WhatsAppOrderButton from "@/components/WhatsAppOrderButton";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
 
@@ -235,6 +236,8 @@ const ProductDetails = () => {
                   <Heart size={16} className={isFavorite(product.id) ? "fill-current" : ""} />
                 </Button>
               </div>
+
+              <WhatsAppOrderButton productName={product.name} />
 
               <div className="grid grid-cols-3 gap-4 border-t border-border pt-6">
                 <div className="flex flex-col items-center text-center gap-2">
