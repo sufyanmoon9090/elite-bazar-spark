@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import ProductReviews from "@/components/ProductReviews";
+import WhatsAppOrderButton from "@/components/WhatsAppOrderButton";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
 
