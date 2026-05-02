@@ -122,11 +122,6 @@ const Navbar = () => {
               <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Profile">
                 <UserCircle size={18} />
               </Link>
-              {isAdmin && (
-                <Link to="/admin" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Admin">
-                  <User size={16} />
-                </Link>
-              )}
               <button onClick={() => signOut()} className="p-2 text-muted-foreground hover:text-destructive transition-colors" title="Sign out">
                 <LogOut size={20} />
               </button>
@@ -193,11 +188,6 @@ const Navbar = () => {
                       <Link to="/profile" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
                         My Profile
                       </Link>
-                      {isAdmin && (
-                        <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-lg px-3 py-3 transition-colors">
-                          Admin Dashboard
-                        </Link>
-                      )}
                     </>
                   )}
                 </div>
