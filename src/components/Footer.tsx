@@ -16,12 +16,11 @@ const footerLinks = {
     { label: "My Favorites", to: "/favorites" },
     { label: "Cart", to: "/cart" },
     { label: "Login / Register", to: "/auth" },
-    { label: "Track Order", to: "/admin/orders" },
+    { label: "Track Order", to: "/my-orders" },
   ],
   "Legal": [
     { label: "Privacy Policy", to: "/contact" },
     { label: "Terms & Conditions", to: "/contact" },
-    { label: "Admin Panel", to: "/admin" },
   ],
 };
 
