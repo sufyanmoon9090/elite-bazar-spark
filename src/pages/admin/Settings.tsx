@@ -21,6 +21,7 @@ export default function Settings() {
   const [deals, setDeals] = useState<any>({});
   const [whyChoose, setWhyChoose] = useState<any>({});
   const [testimonialsH, setTestimonialsH] = useState<any>({});
+  const [testimonialsList, setTestimonialsList] = useState<any[]>([]);
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
   const [trending, setTrending] = useState<any>({});
@@ -35,6 +36,7 @@ export default function Settings() {
       setDeals(allSettings.deals || {});
       setWhyChoose(allSettings.why_choose_us || {});
       setTestimonialsH(allSettings.testimonials_heading || {});
+      setTestimonialsList(Array.isArray(allSettings.testimonials_list?.items) ? allSettings.testimonials_list.items : []);
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
       setTrending(allSettings.trending_products || { count: 8 });
@@ -52,6 +54,7 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "deals", data: deals }),
         updateSetting.mutateAsync({ key: "why_choose_us", data: whyChoose }),
         updateSetting.mutateAsync({ key: "testimonials_heading", data: testimonialsH }),
+        updateSetting.mutateAsync({ key: "testimonials_list", data: { items: testimonialsList } }),
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
         updateSetting.mutateAsync({ key: "trending_products", data: trending }),
@@ -213,11 +216,34 @@ export default function Settings() {
       {/* Testimonials Heading */}
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Testimonials Section</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Title</Label><Input value={testimonialsH.title || ""} onChange={(e) => setTestimonialsH({ ...testimonialsH, title: e.target.value })} /></div>
             <div><Label>Highlight</Label><Input value={testimonialsH.highlight || ""} onChange={(e) => setTestimonialsH({ ...testimonialsH, highlight: e.target.value })} /></div>
           </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Customer Reviews ({testimonialsList.length})</Label>
+            <Button size="sm" variant="outline" onClick={() => setTestimonialsList([...testimonialsList, { id: Date.now().toString(), name: "", role: "Verified Buyer", rating: 5, text: "", avatar: "" }])} className="gap-1"><Plus className="h-3 w-3" /> Add Review</Button>
+          </div>
+          {testimonialsList.map((t: any, i: number) => (
+            <div key={i} className="border border-border rounded-lg p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Review #{i + 1}</span>
+                <Button size="sm" variant="ghost" onClick={() => setTestimonialsList(testimonialsList.filter((_, idx) => idx !== i))} className="h-7 px-2 text-destructive"><Minus className="h-3 w-3" /></Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Input placeholder="Name" value={t.name || ""} onChange={(e) => { const arr = [...testimonialsList]; arr[i] = { ...arr[i], name: e.target.value }; setTestimonialsList(arr); }} />
+                <Input placeholder="Role (e.g., Verified Buyer)" value={t.role || ""} onChange={(e) => { const arr = [...testimonialsList]; arr[i] = { ...arr[i], role: e.target.value }; setTestimonialsList(arr); }} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Input placeholder="Avatar Image URL" value={t.avatar || ""} onChange={(e) => { const arr = [...testimonialsList]; arr[i] = { ...arr[i], avatar: e.target.value }; setTestimonialsList(arr); }} />
+                <Input type="number" min={1} max={5} placeholder="Rating 1-5" value={t.rating ?? 5} onChange={(e) => { const arr = [...testimonialsList]; arr[i] = { ...arr[i], rating: Math.max(1, Math.min(5, Number(e.target.value) || 5)) }; setTestimonialsList(arr); }} />
+              </div>
+              <textarea className="w-full text-sm p-2 rounded-md border border-border bg-background min-h-[60px]" placeholder="Review text..." value={t.text || ""} onChange={(e) => { const arr = [...testimonialsList]; arr[i] = { ...arr[i], text: e.target.value }; setTestimonialsList(arr); }} />
+            </div>
+          ))}
+          {testimonialsList.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">No reviews yet. Click "Add Review" to add the first one.</p>}
         </CardContent>
       </Card>
 

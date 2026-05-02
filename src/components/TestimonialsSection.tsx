@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { testimonials } from "@/data/mockData";
+import { testimonials as fallbackTestimonials } from "@/data/mockData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const defaults = { title: "What Our", highlight: "Customers Say" };
 
 const TestimonialsSection = () => {
   const { data: settings } = useSiteSettings("testimonials_heading");
+  const { data: listSettings } = useSiteSettings("testimonials_list");
   const s = { ...defaults, ...settings };
+  const items = Array.isArray(listSettings?.items) && listSettings.items.length > 0 ? listSettings.items : fallbackTestimonials;
+  if (!items || items.length === 0) return null;
 
   return (
     <section className="py-20">
@@ -18,7 +21,7 @@ const TestimonialsSection = () => {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
+          {items.map((t, i) => (
             <motion.div key={t.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="bg-card border border-border rounded-xl p-6">
               <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, j) => (
