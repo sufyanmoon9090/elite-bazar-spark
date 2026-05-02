@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { testimonials } from "@/data/mockData";
+import { testimonials as fallbackTestimonials } from "@/data/mockData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const defaults = { title: "What Our", highlight: "Customers Say" };
 
 const TestimonialsSection = () => {
   const { data: settings } = useSiteSettings("testimonials_heading");
+  const { data: listSettings } = useSiteSettings("testimonials_list");
   const s = { ...defaults, ...settings };
+  const items = Array.isArray(listSettings?.items) && listSettings.items.length > 0 ? listSettings.items : fallbackTestimonials;
+  if (!items || items.length === 0) return null;
 
   return (
     <section className="py-20">
