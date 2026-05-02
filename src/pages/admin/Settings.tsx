@@ -36,6 +36,7 @@ export default function Settings() {
       setDeals(allSettings.deals || {});
       setWhyChoose(allSettings.why_choose_us || {});
       setTestimonialsH(allSettings.testimonials_heading || {});
+      setTestimonialsList(Array.isArray(allSettings.testimonials_list?.items) ? allSettings.testimonials_list.items : []);
       setBlogH(allSettings.blog_heading || {});
       setNewsletter(allSettings.newsletter || {});
       setTrending(allSettings.trending_products || { count: 8 });
