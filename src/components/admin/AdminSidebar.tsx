@@ -50,15 +50,15 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const isActive = (path: string) =>
-    path === "/admin"
-      ? location.pathname === "/admin"
+    path === ADMIN_BASE
+      ? location.pathname === ADMIN_BASE
       : location.pathname.startsWith(path);
 
   const renderItems = (items: typeof mainItems) =>
     items.map((item) => (
       <SidebarMenuItem key={item.title}>
         <SidebarMenuButton asChild isActive={isActive(item.url)}>
-          <NavLink to={item.url} end={item.url === "/admin"} className="hover:bg-muted/50" activeClassName="bg-primary/10 text-primary font-medium">
+          <NavLink to={item.url} end={item.url === ADMIN_BASE} className="hover:bg-muted/50" activeClassName="bg-primary/10 text-primary font-medium">
             <item.icon className="mr-2 h-4 w-4" />
             {!collapsed && <span>{item.title}</span>}
           </NavLink>
