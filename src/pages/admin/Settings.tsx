@@ -21,6 +21,7 @@ export default function Settings() {
   const [deals, setDeals] = useState<any>({});
   const [whyChoose, setWhyChoose] = useState<any>({});
   const [testimonialsH, setTestimonialsH] = useState<any>({});
+  const [testimonialsList, setTestimonialsList] = useState<any[]>([]);
   const [blogH, setBlogH] = useState<any>({});
   const [newsletter, setNewsletter] = useState<any>({});
   const [trending, setTrending] = useState<any>({});
