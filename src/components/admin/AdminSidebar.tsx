@@ -27,20 +27,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+const ADMIN_BASE = "/admin90";
+
 const mainItems = [
-  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-  { title: "Products", url: "/admin/products", icon: Package },
-  { title: "Categories", url: "/admin/categories", icon: FolderTree },
-  { title: "Orders", url: "/admin/orders", icon: ShoppingCart },
-  { title: "Customers", url: "/admin/customers", icon: Users },
+  { title: "Dashboard", url: `${ADMIN_BASE}`, icon: LayoutDashboard },
+  { title: "Products", url: `${ADMIN_BASE}/products`, icon: Package },
+  { title: "Categories", url: `${ADMIN_BASE}/categories`, icon: FolderTree },
+  { title: "Orders", url: `${ADMIN_BASE}/orders`, icon: ShoppingCart },
+  { title: "Customers", url: `${ADMIN_BASE}/customers`, icon: Users },
 ];
 
 const managementItems = [
-  { title: "Blog / Guides", url: "/admin/blog", icon: BookOpen },
-  { title: "Coupons", url: "/admin/coupons", icon: Tag },
-  { title: "Notifications", url: "/admin/notifications", icon: Bell },
-  { title: "Reports", url: "/admin/reports", icon: FileText },
-  { title: "Settings", url: "/admin/settings", icon: Settings },
+  { title: "Blog / Guides", url: `${ADMIN_BASE}/blog`, icon: BookOpen },
+  { title: "Coupons", url: `${ADMIN_BASE}/coupons`, icon: Tag },
+  { title: "Notifications", url: `${ADMIN_BASE}/notifications`, icon: Bell },
+  { title: "Reports", url: `${ADMIN_BASE}/reports`, icon: FileText },
+  { title: "Settings", url: `${ADMIN_BASE}/settings`, icon: Settings },
 ];
 
 export function AdminSidebar() {
