@@ -122,11 +122,6 @@ const Navbar = () => {
               <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Profile">
                 <UserCircle size={18} />
               </Link>
-              {isAdmin && (
-                <Link to="/admin" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors" title="Admin">
-                  <User size={16} />
-                </Link>
-              )}
               <button onClick={() => signOut()} className="p-2 text-muted-foreground hover:text-destructive transition-colors" title="Sign out">
                 <LogOut size={20} />
               </button>
