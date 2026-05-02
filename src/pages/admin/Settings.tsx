@@ -54,6 +54,7 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "deals", data: deals }),
         updateSetting.mutateAsync({ key: "why_choose_us", data: whyChoose }),
         updateSetting.mutateAsync({ key: "testimonials_heading", data: testimonialsH }),
+        updateSetting.mutateAsync({ key: "testimonials_list", data: { items: testimonialsList } }),
         updateSetting.mutateAsync({ key: "blog_heading", data: blogH }),
         updateSetting.mutateAsync({ key: "newsletter", data: newsletter }),
         updateSetting.mutateAsync({ key: "trending_products", data: trending }),
