@@ -21,7 +21,7 @@ const TestimonialsSection = () => {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
+          {items.map((t, i) => (
             <motion.div key={t.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="bg-card border border-border rounded-xl p-6">
               <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, j) => (
