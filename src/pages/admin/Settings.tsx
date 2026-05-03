@@ -27,6 +27,7 @@ export default function Settings() {
   const [trending, setTrending] = useState<any>({});
   const [contact, setContact] = useState<any>({});
   const [whatsapp, setWhatsapp] = useState<any>({});
+  const [heroSlides, setHeroSlides] = useState<{ enabled: boolean; desktop: any[]; mobile: any[] }>({ enabled: true, desktop: [], mobile: [] });
 
   useEffect(() => {
     if (allSettings) {
@@ -42,6 +43,12 @@ export default function Settings() {
       setTrending(allSettings.trending_products || { count: 8 });
       setContact(allSettings.contact || {});
       setWhatsapp(allSettings.global_whatsapp || {});
+      const hs = allSettings.hero_slides || {};
+      setHeroSlides({
+        enabled: hs.enabled !== false,
+        desktop: Array.isArray(hs.desktop) ? hs.desktop : [],
+        mobile: Array.isArray(hs.mobile) ? hs.mobile : [],
+      });
     }
   }, [allSettings]);
 
@@ -60,6 +67,7 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "trending_products", data: trending }),
         updateSetting.mutateAsync({ key: "contact", data: contact }),
         updateSetting.mutateAsync({ key: "global_whatsapp", data: whatsapp }),
+        updateSetting.mutateAsync({ key: "hero_slides", data: heroSlides }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {
