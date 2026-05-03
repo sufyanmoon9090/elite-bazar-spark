@@ -224,7 +224,7 @@ export type Database = {
           id: string
           product_id: string
           rating: number
-          user_email: string
+          user_email: string | null
           user_name: string
         }
         Insert: {
@@ -233,7 +233,7 @@ export type Database = {
           id?: string
           product_id: string
           rating: number
-          user_email: string
+          user_email?: string | null
           user_name: string
         }
         Update: {
@@ -242,7 +242,7 @@ export type Database = {
           id?: string
           product_id?: string
           rating?: number
-          user_email?: string
+          user_email?: string | null
           user_name?: string
         }
         Relationships: []
