@@ -170,6 +170,8 @@ export type Database = {
         Row: {
           address: Json
           created_at: string
+          guest_email: string | null
+          guest_phone: string | null
           id: string
           items: Json
           order_number: string
@@ -179,11 +181,13 @@ export type Database = {
           status: string
           total: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           address?: Json
           created_at?: string
+          guest_email?: string | null
+          guest_phone?: string | null
           id?: string
           items?: Json
           order_number: string
@@ -193,11 +197,13 @@ export type Database = {
           status?: string
           total?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           address?: Json
           created_at?: string
+          guest_email?: string | null
+          guest_phone?: string | null
           id?: string
           items?: Json
           order_number?: string
@@ -207,7 +213,7 @@ export type Database = {
           status?: string
           total?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
