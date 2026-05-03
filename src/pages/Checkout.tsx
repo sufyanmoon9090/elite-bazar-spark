@@ -25,7 +25,7 @@ const Checkout = () => {
   const incrementUsage = useIncrementCouponUsage();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [address, setAddress] = useState({ name: "", street: "", city: "", province: "", zip: "", phone: "" });
+  const [address, setAddress] = useState({ name: "", street: "", city: "", province: "", zip: "", phone: "", email: "" });
   const [shipping, setShipping] = useState("standard");
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
@@ -69,17 +69,12 @@ const Checkout = () => {
   };
 
   const handlePlaceOrder = async () => {
-    if (!user) {
-      toast.error("Please login to place an order");
-      navigate("/auth");
-      return;
-    }
-
     const orderNumber = `EB-${Date.now().toString(36).toUpperCase()}`;
-
     try {
       await createOrder.mutateAsync({
-        user_id: user.id,
+        user_id: user?.id ?? null,
+        guest_email: user ? null : address.email.trim(),
+        guest_phone: user ? null : address.phone.trim(),
         order_number: orderNumber,
         items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
         total: finalTotal,
@@ -90,18 +85,29 @@ const Checkout = () => {
       if (appliedCoupon) {
         await incrementUsage.mutateAsync(appliedCoupon.id);
       }
-      toast.success(`Order ${orderNumber} placed successfully! 🎉`);
+      toast.success(`Order ${orderNumber} placed successfully!`);
       clearCart();
-      navigate("/my-orders");
-    } catch {
-      toast.error("Order place karne mein error aya. Dobara try karein.");
+      navigate(user ? "/my-orders" : "/");
+    } catch (err: any) {
+      toast.error(err?.message || "Order place karne mein error aya. Dobara try karein.");
     }
   };
 
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+  const isValidPhone = (p: string) => /^[+\d][\d\s-]{6,16}$/.test(p.trim());
+
   const nextStep = () => {
     if (step === 0) {
-      if (!address.name || !address.street || !address.city || !address.phone) {
-        toast.error("Sab required fields fill karein");
+      if (!address.name || !address.street || !address.city || !address.phone || !address.email) {
+        toast.error("Sab required fields fill karein (Email + Phone zaroori hai)");
+        return;
+      }
+      if (!isValidEmail(address.email)) {
+        toast.error("Email format galat hai");
+        return;
+      }
+      if (!isValidPhone(address.phone)) {
+        toast.error("Phone number format galat hai (e.g. +92 3XX XXXXXXX)");
         return;
       }
     }
