@@ -10,6 +10,8 @@ interface Props {
   productId: string;
 }
 
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+
 const ProductReviews = ({ productId }: Props) => {
   const { user } = useAuth();
   const { data: reviews = [], isLoading } = useProductReviews(productId);
@@ -17,6 +19,8 @@ const ProductReviews = ({ productId }: Props) => {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
@@ -24,27 +28,41 @@ const ProductReviews = ({ productId }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      toast.error("Please login to add a review");
-      return;
-    }
     if (!comment.trim()) {
       toast.error("Please write a comment");
       return;
     }
+    let nameToUse = "";
+    let emailToUse = "";
+    if (user) {
+      nameToUse = user.user_metadata?.full_name || user.email || "Anonymous";
+      emailToUse = user.email || "";
+    } else {
+      if (guestName.trim().length < 2) {
+        toast.error("Apna naam likhein");
+        return;
+      }
+      if (guestEmail && !isValidEmail(guestEmail)) {
+        toast.error("Email format galat hai");
+        return;
+      }
+      nameToUse = guestName.trim().slice(0, 60);
+      emailToUse = guestEmail.trim() || "guest@elitebazar.local";
+    }
     try {
       await addReview.mutateAsync({
         product_id: productId,
-        user_email: user.email || "",
-        user_name: user.user_metadata?.full_name || user.email || "Anonymous",
+        user_email: emailToUse,
+        user_name: nameToUse,
         rating,
         comment: comment.trim(),
       });
       toast.success("Review added!");
       setComment("");
       setRating(5);
-    } catch {
-      toast.error("Failed to add review");
+      if (!user) { setGuestName(""); setGuestEmail(""); }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to add review");
     }
   };
 
@@ -64,11 +82,28 @@ const ProductReviews = ({ productId }: Props) => {
       </div>
 
       {/* Add Review Form */}
-      <form onSubmit={handleSubmit} className="border border-border rounded-lg p-4 mb-6">
-        <p className="text-sm font-medium mb-3">
-          {user ? "Write a Review" : "Login to write a review"}
-        </p>
-        <div className="flex items-center gap-1 mb-3">
+      <form onSubmit={handleSubmit} className="border border-border rounded-lg p-4 mb-6 space-y-3">
+        <p className="text-sm font-medium">Write a Review</p>
+
+        {!user && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Input
+              placeholder="Your name *"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value.slice(0, 60))}
+              maxLength={60}
+            />
+            <Input
+              type="email"
+              placeholder="Email (optional)"
+              value={guestEmail}
+              onChange={(e) => setGuestEmail(e.target.value.slice(0, 120))}
+              maxLength={120}
+            />
+          </div>
+        )}
+
+        <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
             <button
               key={i}
@@ -76,10 +111,9 @@ const ProductReviews = ({ productId }: Props) => {
               onMouseEnter={() => setHoverRating(i + 1)}
               onMouseLeave={() => setHoverRating(0)}
               onClick={() => setRating(i + 1)}
-              disabled={!user}
             >
               <Star
-                size={20}
+                size={22}
                 className={
                   i < (hoverRating || rating)
                     ? "fill-primary text-primary cursor-pointer"
@@ -90,16 +124,16 @@ const ProductReviews = ({ productId }: Props) => {
           ))}
           <span className="text-sm text-muted-foreground ml-2">{rating}/5</span>
         </div>
+
         <div className="flex gap-2">
           <Input
-            placeholder={user ? "Write your comment (max 2000 chars)..." : "Login first to review"}
+            placeholder="Apni review likhein..."
             value={comment}
             onChange={(e) => setComment(e.target.value.slice(0, 2000))}
             maxLength={2000}
-            disabled={!user}
             className="flex-1"
           />
-          <Button type="submit" disabled={!user || addReview.isPending} size="sm" className="gap-1">
+          <Button type="submit" disabled={addReview.isPending} size="sm" className="gap-1">
             <Send size={14} /> Post
           </Button>
         </div>

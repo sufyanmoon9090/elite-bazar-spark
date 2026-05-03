@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { fuzzyFilter } from "@/lib/fuzzySearch";
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -27,8 +28,8 @@ const Shop = () => {
     if (selectedCategory !== "all") {
       result = result.filter((p) => p.category === selectedCategory);
     }
-    if (search) {
-      result = result.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+    if (search.trim()) {
+      result = fuzzyFilter(search, result as any) as typeof result;
     }
     if (sortBy === "price-low") result = [...result].sort((a, b) => a.price - b.price);
     if (sortBy === "price-high") result = [...result].sort((a, b) => b.price - a.price);
