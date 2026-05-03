@@ -58,7 +58,9 @@ export function useCreateOrder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (order: {
-      user_id: string;
+      user_id: string | null;
+      guest_email?: string | null;
+      guest_phone?: string | null;
       order_number: string;
       items: OrderItem[];
       total: number;
@@ -68,6 +70,8 @@ export function useCreateOrder() {
     }) => {
       const { data, error } = await supabase.from("orders").insert({
         user_id: order.user_id,
+        guest_email: order.guest_email ?? null,
+        guest_phone: order.guest_phone ?? null,
         order_number: order.order_number,
         items: order.items as any,
         total: order.total,

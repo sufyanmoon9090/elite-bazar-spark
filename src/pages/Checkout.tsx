@@ -160,8 +160,9 @@ const Checkout = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div><Label>Postal Code</Label><Input value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} placeholder="54000" /></div>
-                        <div><Label>Phone Number *</Label><Input value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} placeholder="+92 3XX XXXXXXX" /></div>
+                        <div><Label>Phone Number *</Label><Input type="tel" value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} placeholder="+92 3XX XXXXXXX" /></div>
                       </div>
+                      <div><Label>Email Address *</Label><Input type="email" value={address.email} onChange={(e) => setAddress({ ...address, email: e.target.value })} placeholder="you@example.com" /></div>
                     </CardContent>
                   </Card>
                 )}
