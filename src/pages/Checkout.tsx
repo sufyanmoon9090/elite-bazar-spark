@@ -209,7 +209,7 @@ const Checkout = () => {
                     <CardContent className="space-y-4">
                       <div className="bg-secondary/50 rounded-lg p-4">
                         <h3 className="font-medium text-sm mb-2">Delivery Address:</h3>
-                        <p className="text-sm text-muted-foreground">{address.name}<br />{address.street}<br />{address.city}, {address.province} {address.zip}<br />Phone: {address.phone}</p>
+                        <p className="text-sm text-muted-foreground">{address.name}<br />{address.street}<br />{address.city}, {address.province} {address.zip}<br />Phone: {address.phone}<br />Email: {address.email}</p>
                       </div>
                       <div className="bg-secondary/50 rounded-lg p-4">
                         <h3 className="font-medium text-sm mb-2">Shipping:</h3>
