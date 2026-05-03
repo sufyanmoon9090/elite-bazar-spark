@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
 import PageTransition from "@/components/PageTransition";
+import ScrollToTop from "@/components/ScrollToTop";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
@@ -87,7 +88,7 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+  <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
@@ -98,6 +99,7 @@ const App = () => (
               <OfflineIndicator />
               <WhatsAppButton />
               <BrowserRouter>
+                <ScrollToTop />
                 <PushNotificationListener />
                 <AnimatedRoutes />
               </BrowserRouter>
