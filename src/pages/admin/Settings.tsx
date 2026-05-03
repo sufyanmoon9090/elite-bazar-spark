@@ -140,7 +140,51 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Categories Heading */}
+      {/* Hero Slides (Promotional Carousel) */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Hero Slides (Promotional Carousel)</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label>Show Slides on Home Page</Label>
+            <Switch checked={heroSlides.enabled !== false} onCheckedChange={(v) => setHeroSlides({ ...heroSlides, enabled: v })} />
+          </div>
+          <p className="text-xs text-muted-foreground">Desktop aur Mobile ke liye alag alag image upload karein. Auto 5 sec mein change hoti hain.</p>
+
+          {(["desktop", "mobile"] as const).map((kind) => {
+            const list = heroSlides[kind] || [];
+            return (
+              <div key={kind} className="border border-border rounded-lg p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold capitalize">{kind} Slides ({list.length})</span>
+                  <Button size="sm" variant="outline" className="gap-1" onClick={() => setHeroSlides({ ...heroSlides, [kind]: [...list, { image: "", title: "", subtitle: "", button: "", link: "/shop" }] })}>
+                    <Plus className="h-3 w-3" /> Add Slide
+                  </Button>
+                </div>
+                {list.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">Koi slide nahi. "Add Slide" pe click karein.</p>}
+                {list.map((slide: any, i: number) => (
+                  <div key={i} className="border border-border rounded-md p-2 space-y-2 bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Slide #{i + 1}</span>
+                      <Button size="sm" variant="ghost" className="h-7 px-2 text-destructive" onClick={() => setHeroSlides({ ...heroSlides, [kind]: list.filter((_: any, idx: number) => idx !== i) })}>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <Input placeholder="Image URL (https://...)" value={slide.image || ""} onChange={(e) => { const arr = [...list]; arr[i] = { ...arr[i], image: e.target.value }; setHeroSlides({ ...heroSlides, [kind]: arr }); }} />
+                    {slide.image && <img src={slide.image} alt="" className="w-full h-24 object-cover rounded border border-border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input placeholder="Title (optional)" value={slide.title || ""} onChange={(e) => { const arr = [...list]; arr[i] = { ...arr[i], title: e.target.value }; setHeroSlides({ ...heroSlides, [kind]: arr }); }} />
+                      <Input placeholder="Button text (optional)" value={slide.button || ""} onChange={(e) => { const arr = [...list]; arr[i] = { ...arr[i], button: e.target.value }; setHeroSlides({ ...heroSlides, [kind]: arr }); }} />
+                    </div>
+                    <Input placeholder="Subtitle (optional)" value={slide.subtitle || ""} onChange={(e) => { const arr = [...list]; arr[i] = { ...arr[i], subtitle: e.target.value }; setHeroSlides({ ...heroSlides, [kind]: arr }); }} />
+                    <Input placeholder="Link (e.g. /shop or /product/123)" value={slide.link || ""} onChange={(e) => { const arr = [...list]; arr[i] = { ...arr[i], link: e.target.value }; setHeroSlides({ ...heroSlides, [kind]: arr }); }} />
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Layout className="h-4 w-4" /> Categories Section</CardTitle></CardHeader>
         <CardContent className="space-y-3">
