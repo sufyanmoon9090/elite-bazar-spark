@@ -28,6 +28,9 @@ export default function Settings() {
   const [contact, setContact] = useState<any>({});
   const [whatsapp, setWhatsapp] = useState<any>({});
   const [heroSlides, setHeroSlides] = useState<{ enabled: boolean; desktop: any[]; mobile: any[] }>({ enabled: true, desktop: [], mobile: [] });
+  const [uiLayout, setUiLayout] = useState<{ variant: string }>({ variant: "classic" });
+  const [promoStrip, setPromoStrip] = useState<{ enabled: boolean; text: string; bg_color: string; text_color: string }>({ enabled: true, text: "OFFICIAL E-COMMERCE PARTNER", bg_color: "#FBBF24", text_color: "#111827" });
+  const [poStyle, setPoStyle] = useState<{ navbar_bg: string; navbar_fg: string }>({ navbar_bg: "linear-gradient(90deg, #38BDF8 0%, #FBBF24 100%)", navbar_fg: "#0F172A" });
 
   useEffect(() => {
     if (allSettings) {
@@ -48,6 +51,17 @@ export default function Settings() {
         enabled: hs.enabled !== false,
         desktop: Array.isArray(hs.desktop) ? hs.desktop : [],
         mobile: Array.isArray(hs.mobile) ? hs.mobile : [],
+      });
+      setUiLayout({ variant: allSettings.ui_layout?.variant || "classic" });
+      setPromoStrip({
+        enabled: allSettings.promo_strip?.enabled !== false,
+        text: allSettings.promo_strip?.text || "OFFICIAL E-COMMERCE PARTNER",
+        bg_color: allSettings.promo_strip?.bg_color || "#FBBF24",
+        text_color: allSettings.promo_strip?.text_color || "#111827",
+      });
+      setPoStyle({
+        navbar_bg: allSettings.priceoye_style?.navbar_bg || "linear-gradient(90deg, #38BDF8 0%, #FBBF24 100%)",
+        navbar_fg: allSettings.priceoye_style?.navbar_fg || "#0F172A",
       });
     }
   }, [allSettings]);
