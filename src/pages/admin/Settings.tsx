@@ -82,6 +82,9 @@ export default function Settings() {
         updateSetting.mutateAsync({ key: "contact", data: contact }),
         updateSetting.mutateAsync({ key: "global_whatsapp", data: whatsapp }),
         updateSetting.mutateAsync({ key: "hero_slides", data: heroSlides }),
+        updateSetting.mutateAsync({ key: "ui_layout", data: uiLayout }),
+        updateSetting.mutateAsync({ key: "promo_strip", data: promoStrip }),
+        updateSetting.mutateAsync({ key: "priceoye_style", data: poStyle }),
       ]);
       toast({ title: "All settings saved!" });
     } catch {

@@ -37,8 +37,10 @@ export function useUpdateSiteSetting() {
     mutationFn: async ({ key, data }: { key: string; data: any }) => {
       const { error } = await supabase
         .from("site_settings")
-        .update({ section_data: data, updated_at: new Date().toISOString() })
-        .eq("section_key", key);
+        .upsert(
+          { section_key: key, section_data: data, updated_at: new Date().toISOString() },
+          { onConflict: "section_key" }
+        );
       if (error) throw error;
     },
     onSuccess: () => {
