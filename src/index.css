@@ -135,19 +135,19 @@
   }
 
   .bg-surface {
-    background-color: hsl(220, 18%, 12%);
+    background-color: hsl(var(--surface));
   }
 
   .bg-surface-hover {
-    background-color: hsl(220, 18%, 16%);
+    background-color: hsl(var(--surface-hover));
   }
 
   .shadow-gold {
-    box-shadow: 0 4px 30px -5px hsl(43 74% 49% / 0.25);
+    box-shadow: var(--shadow-gold);
   }
 
   .shadow-card {
-    box-shadow: 0 8px 32px -8px hsl(0 0% 0% / 0.4);
+    box-shadow: var(--shadow-card);
   }
 
   .glass {
