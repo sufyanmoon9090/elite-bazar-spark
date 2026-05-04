@@ -106,6 +106,57 @@ export default function Settings() {
         </Button>
       </div>
 
+      {/* UI Layout Switcher */}
+      <Card className="border-primary/40">
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Palette className="h-4 w-4" /> UI Layout (Theme Switcher)</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-xs text-muted-foreground">Apni website ka layout choose karein. Save karne ke baad turant change ho jayega.</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setUiLayout({ variant: "classic" })}
+              className={`text-left p-3 rounded-lg border-2 transition-all ${uiLayout.variant === "classic" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+            >
+              <div className="h-20 bg-gradient-to-b from-muted to-card rounded-md mb-2 flex items-center justify-center text-xs text-muted-foreground">Hero Image + Slides</div>
+              <div className="font-semibold text-sm">Classic (Current)</div>
+              <div className="text-xs text-muted-foreground">Big hero + welcome banner</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setUiLayout({ variant: "priceoye" })}
+              className={`text-left p-3 rounded-lg border-2 transition-all ${uiLayout.variant === "priceoye" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+            >
+              <div className="h-20 rounded-md mb-2 flex flex-col text-xs overflow-hidden">
+                <div className="bg-yellow-400 text-black text-center py-0.5 font-bold text-[10px]">PROMO STRIP</div>
+                <div className="bg-gradient-to-r from-sky-400 to-yellow-400 flex-1 flex items-center justify-center text-white font-bold">Search + Categories</div>
+              </div>
+              <div className="font-semibold text-sm">PriceOye Style</div>
+              <div className="text-xs text-muted-foreground">Promo strip + colored navbar + category icons</div>
+            </button>
+          </div>
+
+          {uiLayout.variant === "priceoye" && (
+            <div className="space-y-3 pt-2 border-t border-border">
+              <div className="flex items-center justify-between">
+                <Label>Show Promo Strip (top yellow bar)</Label>
+                <Switch checked={promoStrip.enabled} onCheckedChange={(v) => setPromoStrip({ ...promoStrip, enabled: v })} />
+              </div>
+              <div><Label>Promo Strip Text</Label><Input value={promoStrip.text} onChange={(e) => setPromoStrip({ ...promoStrip, text: e.target.value })} placeholder="OFFICIAL E-COMMERCE PARTNER" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label>Strip Background</Label><Input type="color" value={promoStrip.bg_color} onChange={(e) => setPromoStrip({ ...promoStrip, bg_color: e.target.value })} /></div>
+                <div><Label>Strip Text Color</Label><Input type="color" value={promoStrip.text_color} onChange={(e) => setPromoStrip({ ...promoStrip, text_color: e.target.value })} /></div>
+              </div>
+              <Separator />
+              <div><Label>Navbar Background (CSS color or gradient)</Label><Input value={poStyle.navbar_bg} onChange={(e) => setPoStyle({ ...poStyle, navbar_bg: e.target.value })} placeholder="linear-gradient(90deg, #38BDF8, #FBBF24)" /></div>
+              <div><Label>Navbar Text Color</Label><Input type="color" value={poStyle.navbar_fg} onChange={(e) => setPoStyle({ ...poStyle, navbar_fg: e.target.value })} /></div>
+              <div className="rounded-md p-2 text-center text-sm font-semibold" style={{ background: poStyle.navbar_bg, color: poStyle.navbar_fg }}>
+                Navbar Preview
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* General / Branding */}
       <Card>
         <CardHeader><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4" /> General / Branding</CardTitle></CardHeader>
