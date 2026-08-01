@@ -303,6 +303,7 @@ export type Database = {
           price: number
           rating: number
           reviews: number
+          supplier_url: string | null
         }
         Insert: {
           badge?: string | null
@@ -318,6 +319,7 @@ export type Database = {
           price?: number
           rating?: number
           reviews?: number
+          supplier_url?: string | null
         }
         Update: {
           badge?: string | null
@@ -333,6 +335,7 @@ export type Database = {
           price?: number
           rating?: number
           reviews?: number
+          supplier_url?: string | null
         }
         Relationships: []
       }
