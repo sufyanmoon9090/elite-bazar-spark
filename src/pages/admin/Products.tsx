@@ -40,7 +40,7 @@ export default function Products() {
   const [variantForm, setVariantForm] = useState({ variant_name: "", price: "", original_price: "", image: "", description: "" });
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
 
-  const [form, setForm] = useState({ name: "", price: "", category: "", image: "", description: "", images: [] as string[] });
+  const [form, setForm] = useState({ name: "", price: "", category: "", image: "", description: "", images: [] as string[], supplierUrl: "" });
   const [newImageUrl, setNewImageUrl] = useState("");
 
   const filtered = productList.filter((p) =>
@@ -49,7 +49,7 @@ export default function Products() {
 
   const openNew = () => {
     setEditingProduct(null);
-    setForm({ name: "", price: "", category: "", image: "", description: "", images: [] });
+    setForm({ name: "", price: "", category: "", image: "", description: "", images: [], supplierUrl: "" });
     setNewImageUrl("");
     setDialogOpen(true);
   };
@@ -63,6 +63,7 @@ export default function Products() {
       image: product.image,
       description: product.description || "",
       images: product.images || [],
+      supplierUrl: product.supplierUrl || "",
     });
     setNewImageUrl("");
     setDialogOpen(true);
@@ -92,6 +93,7 @@ export default function Products() {
           image: mainImage,
           images: form.images.length > 0 ? form.images : undefined,
           description: form.description,
+          supplierUrl: form.supplierUrl,
         },
       }, {
         onSuccess: () => toast({ title: "Product updated" }),
@@ -107,6 +109,7 @@ export default function Products() {
         rating: 0,
         reviews: 0,
         description: form.description,
+        supplierUrl: form.supplierUrl,
       }, {
         onSuccess: () => toast({ title: "Product added" }),
         onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -216,6 +219,18 @@ export default function Products() {
 
                 <MultiImageUpload value={form.images} onChange={(urls) => setForm({ ...form, images: urls })} folder="products" label="Additional Images" />
 
+                {/* ADMIN ONLY — never rendered on the public storefront */}
+                <div>
+                  <Label>Supplier Sourcing Link (private)</Label>
+                  <Input
+                    value={form.supplierUrl}
+                    onChange={(e) => setForm({ ...form, supplierUrl: e.target.value })}
+                    placeholder="https://markaz.app/product/..."
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Visible only inside the admin panel. Used for the "Order from Supplier" button.
+                  </p>
+                </div>
                 <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Product description" /></div>
                 <Button onClick={handleSave} className="w-full" disabled={addProduct.isPending || updateProduct.isPending}>
                   {editingProduct ? "Update Product" : "Add Product"}
