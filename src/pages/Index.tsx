@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
 import HeroSlides from "@/components/HeroSlides";
 import CategoriesSection from "@/components/CategoriesSection";
@@ -26,6 +27,38 @@ const Index = () => {
   if (variant === "priceoye") {
     return (
       <div className="min-h-screen bg-background">
+    <SEO
+      title="Elite Bazar — Online Shopping in Pakistan | Cash on Delivery"
+      description="Shop electronics, fashion, gadgets and home essentials at Elite Bazar. Best prices in Pakistan, fast delivery and Cash on Delivery."
+      path="/"
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Elite Bazar",
+        url: "https://elite-bazar.lovable.app/",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://elite-bazar.lovable.app/shop?q={search_term_string}",
+          "query-input": "required name=search_term_string",
+        },
+      }}
+    />
+      <SEO
+        title="Elite Bazar — Online Shopping in Pakistan | Cash on Delivery"
+        description="Shop electronics, fashion, gadgets and home essentials at Elite Bazar. Best prices in Pakistan, fast delivery and Cash on Delivery."
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Elite Bazar",
+          url: "https://elite-bazar.lovable.app/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://elite-bazar.lovable.app/shop?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }}
+      />
         <PromoStrip />
         <PriceOyeNavbar />
         <main className="pt-16">

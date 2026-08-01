@@ -6,6 +6,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,8 +38,37 @@ const Shop = () => {
     return result;
   }, [products, search, selectedCategory, sortBy]);
 
+  const activeCategory = categories.find((c) => c.slug === selectedCategory);
+  const seoTitle = activeCategory
+    ? `${activeCategory.name} — Buy Online in Pakistan | Elite Bazar`
+    : "Shop All Products — Online Store in Pakistan | Elite Bazar";
+  const seoDescription = activeCategory
+    ? `Browse ${activeCategory.name.toLowerCase()} at Elite Bazar. Genuine products, best prices in Pakistan and Cash on Delivery.`
+    : "Browse the full Elite Bazar catalog — electronics, fashion, gadgets and home essentials with Cash on Delivery across Pakistan.";
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        path={activeCategory ? `/shop?category=${activeCategory.slug}` : "/shop"}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://elite-bazar.lovable.app/" },
+            { "@type": "ListItem", position: 2, name: "Shop", item: "https://elite-bazar.lovable.app/shop" },
+            ...(activeCategory
+              ? [{
+                  "@type": "ListItem",
+                  position: 3,
+                  name: activeCategory.name,
+                  item: `https://elite-bazar.lovable.app/shop?category=${activeCategory.slug}`,
+                }]
+              : []),
+          ],
+        }}
+      />
       <Navbar />
       <main className="pt-24 pb-20">
         <div className="container mx-auto px-4">
