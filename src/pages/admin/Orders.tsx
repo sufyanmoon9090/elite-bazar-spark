@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAllOrders, useUpdateOrderStatus, type Order } from "@/hooks/useOrders";
-import { Search, ChevronDown, Eye, CheckCircle2, MapPin, Phone, User, Package, CreditCard, Truck, Calendar, XCircle } from "lucide-react";
+import { useProducts } from "@/hooks/useProducts";
+import { Search, ExternalLink, ChevronDown, Eye, CheckCircle2, MapPin, Phone, User, Package, CreditCard, Truck, Calendar, XCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,8 @@ const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
 export default function Orders() {
   const { data: orders = [], isLoading } = useAllOrders();
   const updateStatus = useUpdateOrderStatus();
+  // Products are loaded to resolve each ordered item's private supplier sourcing link
+  const { data: products = [] } = useProducts();
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -280,9 +283,29 @@ export default function Orders() {
                               Qty: {item.quantity} × Rs. {Number(item.price).toLocaleString()}
                             </p>
                           </div>
-                          <p className="text-sm font-semibold">
-                            Rs. {(Number(item.price) * Number(item.quantity)).toLocaleString()}
-                          </p>
+                          <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm font-semibold">
+                              Rs. {(Number(item.price) * Number(item.quantity)).toLocaleString()}
+                            </p>
+                            {/* ADMIN ONLY: direct fulfillment link to the supplier listing */}
+                            {(() => {
+                              const supplierUrl = products.find((p) => p.id === item.id)?.supplierUrl;
+                              return supplierUrl ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 gap-1 text-[11px]"
+                                  asChild
+                                >
+                                  <a href={supplierUrl} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="h-3 w-3" /> Order from Supplier
+                                  </a>
+                                </Button>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground">No supplier link</span>
+                              );
+                            })()}
+                          </div>
                         </div>
                       ))}
                     </div>
