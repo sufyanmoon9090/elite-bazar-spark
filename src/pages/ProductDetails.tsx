@@ -9,6 +9,7 @@ import { useFavorites } from "@/context/FavoritesContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
+import SEO, { SITE_URL } from "@/components/SEO";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import ProductReviews from "@/components/ProductReviews";
@@ -54,6 +55,7 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
+        <SEO title="Product Not Found | Elite Bazar" description="This product is no longer available." path="/shop" noindex />
         <Navbar />
         <main className="pt-24 pb-20 text-center">
           <p className="text-muted-foreground text-lg">Product not found</p>
@@ -92,8 +94,75 @@ const ProductDetails = () => {
     setSelectedImageIndex(0);
   };
 
+  // ---- SEO: meta tags + Product / Offer / BreadcrumbList structured data ----
+  const seoTitle = `${product.name} — Price in Pakistan | Elite Bazar`;
+  const seoDescription = (
+    activeDescription ||
+    `Buy ${product.name} online at Elite Bazar for Rs. ${activePrice.toLocaleString()}. Cash on Delivery all over Pakistan.`
+  ).slice(0, 155);
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: seoDescription,
+    image: allImages,
+    sku: product.id,
+    category: product.category,
+    brand: { "@type": "Brand", name: "Elite Bazar" },
+    ...(product.reviews > 0 && product.rating > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: product.rating,
+            reviewCount: product.reviews,
+          },
+        }
+      : {}),
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/product/${product.id}`,
+      priceCurrency: "PKR",
+      price: activePrice,
+      availability:
+        (product as any).in_stock === false
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.category,
+        item: `${SITE_URL}/shop?category=${product.category}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: product.name,
+        item: `${SITE_URL}/product/${product.id}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        path={`/product/${product.id}`}
+        image={allImages[0]}
+        type="product"
+        jsonLd={[productSchema, breadcrumbSchema]}
+      />
       <Navbar />
       <main className="pt-24 pb-20">
         <div className="container mx-auto px-4">

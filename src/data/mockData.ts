@@ -10,6 +10,8 @@ export interface Product {
   reviews: number;
   badge?: string;
   description?: string;
+  /** ADMIN ONLY — supplier/source product link (never rendered on public pages) */
+  supplierUrl?: string;
 }
 
 export interface Category {

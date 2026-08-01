@@ -14,6 +14,8 @@ interface DbProduct {
   reviews: number;
   badge: string | null;
   description: string | null;
+  /** ADMIN ONLY — supplier sourcing link */
+  supplier_url?: string | null;
 }
 
 function mapDbToProduct(db: DbProduct): Product {
@@ -29,6 +31,7 @@ function mapDbToProduct(db: DbProduct): Product {
     reviews: db.reviews,
     badge: db.badge ?? undefined,
     description: db.description ?? undefined,
+    supplierUrl: db.supplier_url ?? undefined,
   };
 }
 
@@ -61,6 +64,7 @@ export function useAddProduct() {
         reviews: product.reviews,
         badge: product.badge ?? null,
         description: product.description ?? null,
+        supplier_url: product.supplierUrl ?? null,
       };
       const { error } = await supabase.from("products").insert(row);
       if (error) throw error;
@@ -84,6 +88,7 @@ export function useUpdateProduct() {
       if (data.reviews !== undefined) updates.reviews = data.reviews;
       if (data.badge !== undefined) updates.badge = data.badge;
       if (data.description !== undefined) updates.description = data.description;
+      if (data.supplierUrl !== undefined) updates.supplier_url = data.supplierUrl || null;
 
       const { error } = await supabase.from("products").update(updates as never).eq("id", id);
       if (error) throw error;
