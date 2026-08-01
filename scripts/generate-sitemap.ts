@@ -2,14 +2,24 @@
  * Sitemap generator — runs before `vite dev` and `vite build` (predev/prebuild).
  * Writes public/sitemap.xml with all static routes + every product URL.
  */
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync, existsSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://elite-bazar.lovable.app";
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY =
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+// Load .env manually (this script runs outside Vite)
+const env: Record<string, string> = { ...process.env } as Record<string, string>;
+if (existsSync(resolve(".env"))) {
+  readFileSync(resolve(".env"), "utf-8")
+    .split("\n")
+    .forEach((line) => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*"?([^"\n]*)"?\s*$/);
+      if (match) env[match[1]] = match[2];
+    });
+}
+
+const SUPABASE_URL = env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY;
 
 interface SitemapEntry {
   path: string;
