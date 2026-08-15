@@ -26,26 +26,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://elite-bazar.lovable.app/product/b8b4d58a-12f3-464d-b5e9-62c75e1b8c14</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://elite-bazar.lovable.app/product/d9bb8529-2641-460e-9909-f89cc7510616</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://elite-bazar.lovable.app/product/cfeb510a-aa9e-4d68-ad71-f06fced096ad</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://elite-bazar.lovable.app/product/9aff1c62-8f39-46bb-a1d9-e8f849a8891d</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://elite-bazar.lovable.app/shop?category=watch</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
