@@ -18,8 +18,15 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
+      // Registration happens only through the guarded wrapper in src/pwa.ts
+      injectRegister: null,
+      devOptions: { enabled: false },
+      filename: "sw.js",
       includeAssets: ["favicon.ico", "placeholder.svg"],
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2}"],
